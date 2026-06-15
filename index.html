@@ -245,7 +245,8 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
       <div class="formula">cos α = ascissa di P   ;   sin α = ordinata di P</div>
       <p>Poiché P sta sulla circonferenza di raggio 1, si ha sempre <strong>−1 ≤ sin α ≤ 1</strong> e <strong>−1 ≤ cos α ≤ 1</strong>. La <strong>tangente</strong> è l'ordinata del punto in cui la retta OP incontra la retta verticale x = 1 (l'«asse delle tangenti»):</p>
       <div class="formula">tan α = sin α / cos α   (con cos α ≠ 0)</div>
-      <div class="diagram"><canvas id="cv-gonio-circle"></canvas><p class="cap">Per α = 40°: il coseno è il segmento orizzontale (arancio), il seno quello verticale (verde), la tangente è letta sull'asse x = 1 (viola).</p></div>
+      <div class="diagram"><canvas id="cv-gonio-circle"></canvas><p class="cap">🔄 Animazione: il punto P ruota. <b style="color:#ef6c00">cos α</b> è il segmento orizzontale, <b style="color:#2e7d32">sen α</b> quello verticale, <b style="color:#7b1fa2">tan α</b> è letta sull'asse x = 1.</p></div>
+      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-gonio" onclick="tToggle('gonio',this)">⏸ Pausa</button></div>
       <p>Si definiscono anche le funzioni reciproche: <strong>cotangente</strong> cot α = cos α/sin α = 1/tan α, <strong>secante</strong> sec α = 1/cos α e <strong>cosecante</strong> csc α = 1/sin α.</p>
     </div>
 
@@ -394,7 +395,8 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
     <div class="card">
       <h2>🔄 Archi associati a un angolo α</h2>
       <p>Due archi si dicono <strong>associati</strong> quando i loro punti sulla circonferenza sono simmetrici. Le relazioni che ne derivano permettono di <strong>ricondurre qualsiasi angolo al primo quadrante</strong>, dove i valori sono noti.</p>
-      <div class="diagram"><canvas id="cv-assoc-circle"></canvas><p class="cap">α e il suo supplementare π − α: i punti sono simmetrici rispetto all'asse y, quindi hanno lo stesso seno e coseni opposti.</p></div>
+      <div class="diagram"><canvas id="cv-assoc-circle"></canvas><p class="cap">🔄 Animazione: <b style="color:#1565c0">α</b> e il suo supplementare <b style="color:#c2185b">π − α</b> restano simmetrici rispetto all'asse y, quindi hanno lo stesso seno e coseni opposti.</p></div>
+      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-assoc" onclick="tToggle('assoc',this)">⏸ Pausa</button></div>
     </div>
 
     <div class="card">
@@ -470,6 +472,7 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
       <p>Il punto P = (cos α, sin α) sta sulla circonferenza di raggio 1. Il triangolo rettangolo che ha per cateti il coseno e il seno e per ipotenusa il raggio dà, per il teorema di Pitagora, l'identità più importante della goniometria:</p>
       <div class="formula">sin²α + cos²α = 1</div>
       <div class="diagram"><canvas id="cv-rel-circle"></canvas><p class="cap">🔄 Animazione: l'angolo α ruota. <b style="color:#2e7d32">sen α</b> (verde) e <b style="color:#ef6c00">cos α</b> (arancio) sono i cateti, l'ipotenusa è 1: per Pitagora cos²α + sin²α = 1, sempre.</p></div>
+      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-rel" onclick="tToggle('rel',this)">⏸ Pausa</button></div>
       <p>Da essa si ricava una funzione dall'altra (il segno dipende dal quadrante):</p>
       <div class="formula">sin α = ±√(1 − cos²α) ;  cos α = ±√(1 − sin²α)</div>
     </div>
@@ -1080,7 +1083,7 @@ function smGonio(){
 }
 function smNoti(){
   const a=parseInt(el('nt-sel').value),e=EXACT[a]||['—','—','—'];
-  drawCircle(el('cv-noti-sim'),{deg:a,show:{sin:true,cos:true,tan:false,radius:true}});
+  drawCircle(el('cv-noti-sim'),{deg:a,show:{sin:true,cos:true,tan:false,radius:true},annot:true});
   setv('nt-sin','sin = '+e[0]); setv('nt-cos','cos = '+e[1]); setv('nt-tan','tan = '+e[2]);
   setHTML('nt-fb',`Angolo <b>${a}°</b> = ${fmtRad(a)} rad: &nbsp; sin = <b>${e[0]}</b>, &nbsp; cos = <b>${e[1]}</b>, &nbsp; tan = <b>${e[2]}</b>.`);
 }
@@ -1156,7 +1159,7 @@ function smCarnot(){
 
 /* ============ DIAGRAMMI STATICI (Teoria) ============ */
 function rdGonio(){
-  drawCircle(el('cv-gonio-circle'),{deg:40,show:{sin:true,cos:true,tan:true,radius:true},annot:true});
+  tStart('gonio');
   makePlot(el('cv-gonio-graph'),{xmin:-2*Math.PI-0.3,xmax:2*Math.PI+0.3,ymin:-1.5,ymax:1.5,xticks:piTicks(-2*Math.PI,2*Math.PI),
     curves:[{fn:Math.sin,color:SINCOL,width:2.4},{fn:Math.cos,color:ACC,width:2.4}]});
 }
@@ -1165,8 +1168,8 @@ function rdNoti(){
     angles:[{at:0,label:'30°',col:ACC},{at:1,label:'60°',col:TEAL}],slabels:['½','√3/2','1']});
   drawCircle(el('cv-noti-circle'),{noMain:true,marks:[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330].map(d=>({deg:d,label:d+'°'}))});
 }
-function rdAssoc(){ drawCircle(el('cv-assoc-circle'),{deg:55,deg2:125,show:{sin:false,cos:false,tan:false,radius:true},label1:'α',label2:'π−α'}); }
-function rdRel(){ startRelAnim(); }
+function rdAssoc(){ tStart('assoc'); }
+function rdRel(){ tStart('rel'); }
 function rdEq(){ makePlot(el('cv-eq-th'),{xmin:-0.3,xmax:2*Math.PI+0.3,ymin:-1.5,ymax:1.5,xticks:piTicks(0,2*Math.PI),
     curves:[{fn:Math.sin,color:SINCOL,width:2.6}],hlines:[{y:0.5,color:PRIMARY}],
     points:[{x:Math.PI/6,y:0.5,label:'30°'},{x:5*Math.PI/6,y:0.5,label:'150°'}],vlines:[{x:Math.PI/6},{x:5*Math.PI/6}]}); }
@@ -1194,16 +1197,21 @@ function loopAnim(){ if(!animState)return; const s=el(animState.slider); let v=p
   else { if(v>=animState.to){v=animState.to;animState.dir=-1;} else if(v<=animState.from){v=animState.from;animState.dir=1;} }
   s.value=v; animState.update(); animRAF=requestAnimationFrame(loopAnim); }
 function stopAnim(){ if(animRAF)cancelAnimationFrame(animRAF); animRAF=null; if(animState){animState.btn.textContent=animState.origLabel;animState=null;} }
-/* animazione automatica del diagramma di teoria (Relazioni fondamentali) */
+/* ---- animazioni dei diagrammi di teoria (con pulsante Pausa/Riprendi) ---- */
 const reduceMotion=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-let relRAF=null,relAng=20;
-function relFrame(){ relAng+=0.5; if(relAng>=360)relAng-=360;
-  drawCircle(el('cv-rel-circle'),{deg:relAng,show:{sin:true,cos:true,tan:false,radius:true},annot:true});
-  relRAF=requestAnimationFrame(relFrame); }
-function startRelAnim(){ stopRelAnim();
-  if(reduceMotion){ drawCircle(el('cv-rel-circle'),{deg:35,show:{sin:true,cos:true,tan:false,radius:true},annot:true}); return; }
-  relFrame(); }
-function stopRelAnim(){ if(relRAF)cancelAnimationFrame(relRAF); relRAF=null; }
+const TANIM={
+  gonio:{ang:25,raf:null,paused:false,draw(a){drawCircle(el('cv-gonio-circle'),{deg:a,show:{sin:true,cos:true,tan:true,radius:true},annot:true});}},
+  assoc:{ang:25,raf:null,paused:false,draw(a){drawCircle(el('cv-assoc-circle'),{deg:a,deg2:180-a,show:{sin:false,cos:false,tan:false,radius:true},label1:'α',label2:'π−α'});}},
+  rel:{ang:20,raf:null,paused:false,draw(a){drawCircle(el('cv-rel-circle'),{deg:a,show:{sin:true,cos:true,tan:false,radius:true},annot:true});}}
+};
+function tFrame(key){ const t=TANIM[key]; if(!t||t.paused)return; t.ang+=0.5; if(t.ang>=360)t.ang-=360; t.draw(t.ang); t.raf=requestAnimationFrame(()=>tFrame(key)); }
+function tStart(key,manual){ tStop(key); const t=TANIM[key]; if(!t)return;
+  if(t.paused||(reduceMotion&&!manual)){ t.draw(t.ang); return; } tFrame(key); }
+function tStop(key){ const t=TANIM[key]; if(t&&t.raf){cancelAnimationFrame(t.raf);t.raf=null;} }
+function tStopAll(){ Object.keys(TANIM).forEach(tStop); }
+function tToggle(key,btn){ const t=TANIM[key]; t.paused=!t.paused;
+  if(t.paused){ tStop(key); t.draw(t.ang); btn.textContent='▶ Riprendi'; }
+  else { btn.textContent='⏸ Pausa'; tStart(key,true); } }
 
 /* ============ NAVIGAZIONE ============ */
 const tabs=document.querySelectorAll('nav.main button');
@@ -1211,11 +1219,11 @@ const scenes=document.querySelectorAll('section.scene');
 const SECS=['gonio','noti','assoc','rel','eqgon','rett','corda','seni','carnot'];
 const activeSub={}; SECS.forEach(s=>activeSub[s]='teoria');
 function renderFor(sec,sub){ const r=RENDERERS[sec]&&RENDERERS[sec][sub]; if(r)r(); }
-function show(id){ stopAnim(); stopRelAnim();
+function show(id){ stopAnim(); tStopAll();
   tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
   scenes.forEach(s=>s.classList.toggle('active',s.id===id));
   window.scrollTo({top:0,behavior:'instant'}); renderFor(id,activeSub[id]||'teoria'); }
-function showSub(sec,sub){ stopAnim(); stopRelAnim(); const scene=el(sec);
+function showSub(sec,sub){ stopAnim(); tStopAll(); const scene=el(sec);
   scene.querySelectorAll('.subtab').forEach(b=>b.classList.toggle('active',b.dataset.sub===sub));
   scene.querySelectorAll('.subpanel').forEach(p=>p.classList.toggle('active',p.dataset.sub===sub));
   activeSub[sec]=sub; renderFor(sec,sub); }
@@ -1507,6 +1515,7 @@ function renderReview(s){ const st=qz[s];
 /* ============ INIT ============ */
 Object.keys(QUIZ).forEach(renderQuiz);
 Object.keys(PV).forEach(renderProva);
+if(reduceMotion){ Object.keys(TANIM).forEach(k=>{ TANIM[k].paused=true; const b=el('anim-'+k); if(b)b.textContent='▶ Riprendi'; }); }
 </script>
 </body>
 </html>
