@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d47a1">
+<title>Goniometria e trigonometria</title>
+<style>
+:root{
+  --bg:#eef3fb;--surface:#fff;--primary:#1565c0;--primary-d:#0d47a1;--accent:#ef6c00;
+  --text:#13233b;--muted:#5b6b80;--border:#cdd9ea;--shadow:0 2px 6px rgba(20,50,100,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  font-size:clamp(15px,2.4vw,17px);line-height:1.55}
+header{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;
+  padding:.85rem 1rem;box-shadow:var(--shadow);position:sticky;top:0;z-index:10}
+header h1{margin:0;font-size:clamp(1.15rem,4.5vw,1.55rem)}
+header .sub{font-size:.85em;opacity:.85}
+nav.main{background:var(--surface);display:flex;overflow-x:auto;
+  border-bottom:1px solid var(--border);position:sticky;z-index:5;scrollbar-width:thin}
+nav.main button{flex:0 0 auto;background:none;border:0;padding:.85rem 1rem;
+  font-size:.95em;color:var(--muted);border-bottom:3px solid transparent;
+  cursor:pointer;white-space:nowrap;min-height:44px;font-family:inherit}
+nav.main button.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+main{padding:1rem;max-width:880px;margin:0 auto}
+section.scene{display:none}
+section.scene.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.card h2{margin-top:0;color:var(--primary-d);font-size:1.15em}
+.card h3{margin:.85rem 0 .35rem;color:var(--primary-d);font-size:1em}
+.card h4{margin:.7rem 0 .25rem;color:var(--primary-d);font-size:.95em}
+.formula{background:#e7effa;border-left:3px solid var(--primary);
+  padding:.55rem .8rem;margin:.4rem 0;border-radius:4px;
+  font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-size:1.05em;
+  overflow-x:auto;white-space:nowrap}
+.tip{background:#e8f5e9;border-left:3px solid #2e7d32;padding:.5rem .8rem;
+  margin:.5rem 0;border-radius:4px;font-size:.93em}
+.warn{background:#fff8e1;border-left:3px solid #f9a825;padding:.5rem .8rem;
+  margin:.5rem 0;border-radius:4px;font-size:.93em}
+.ex{background:#fff3e0;border-left:3px solid var(--accent);padding:.5rem .8rem;
+  margin:.5rem 0;border-radius:4px;font-size:.93em}
+ul,ol{margin:.35rem 0 .6rem 1.2rem;padding:0}
+li{margin:.18rem 0}
+table.tbl{border-collapse:collapse;margin:.4rem 0;font-size:.92em;width:100%}
+table.tbl th,table.tbl td{border:1px solid var(--border);padding:.25rem .45rem;text-align:center;font-variant-numeric:tabular-nums}
+table.tbl th{background:#e7effa;color:var(--primary-d)}
+table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem}
+.home-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:.9rem;cursor:pointer;box-shadow:var(--shadow);text-align:left;font-size:1em;
+  font-family:inherit;color:inherit}
+.home-card:hover{border-color:var(--primary)}
+.home-card .ico{font-size:1.8em;display:block;margin-bottom:.3rem}
+.home-card strong{color:var(--primary-d);display:block;margin-bottom:.15rem}
+.home-card span{color:var(--muted);font-size:.88em}
+.part-label{margin:1.1rem .2rem .2rem;font-weight:700;color:var(--primary-d);font-size:1.02em;
+  display:flex;align-items:center;gap:.5rem}
+.part-label::after{content:"";flex:1;height:1px;background:var(--border)}
+.diagram{margin:.6rem 0}
+.diagram canvas{width:100%;height:clamp(260px,62vw,340px);display:block;
+  background:#fff;border:1px solid var(--border);border-radius:8px;touch-action:none}
+.cap{font-size:.82em;color:var(--muted);text-align:center;margin:.3rem 0 0}
+@media(max-width:480px){main{padding:.7rem}.card{padding:.85rem}}
+/* ----- Sub-navigation ----- */
+.subnav{display:flex;gap:.4rem;margin-bottom:.9rem;flex-wrap:wrap}
+.subtab{flex:1;min-width:108px;background:#e7effa;border:1.5px solid var(--border);border-radius:9px;
+  padding:.55rem .6rem;text-align:center;cursor:pointer;font-size:.9em;
+  font-family:inherit;color:var(--primary-d);font-weight:600}
+.subtab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.subpanel{display:none}
+.subpanel.active{display:block}
+/* ----- Simulazioni ----- */
+.sim-controls{display:flex;flex-direction:column;gap:.6rem;margin:.7rem 0}
+.ctrl{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.ctrl label{min-width:92px;font-size:.9em;color:var(--primary-d);font-weight:600}
+.ctrl input[type=range]{flex:1;min-width:140px;accent-color:var(--primary)}
+.ctrl .v{font-variant-numeric:tabular-nums;min-width:62px;text-align:right;
+  font-family:"Cambria Math",Georgia,serif;color:var(--accent);font-weight:700}
+.ctrl select{font-family:inherit;font-size:.95em;padding:.3rem .45rem;border-radius:6px;border:1.5px solid var(--border);background:#fff;color:var(--text)}
+.ctrl.chk label{min-width:0}
+.btn{background:var(--primary);color:#fff;border:0;border-radius:8px;
+  padding:.45rem 1rem;font-size:.88em;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--primary-d)}
+.btn.ghost{background:#e7effa;color:var(--primary-d);border:1.5px solid var(--primary)}
+.btn.ghost:hover{background:#d7e4f7}
+.sim-fb{background:#e7effa;border-left:3px solid var(--primary);padding:.55rem .8rem;
+  border-radius:4px;font-size:.92em;margin-top:.6rem;min-height:1.2em}
+.readout{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0 .2rem}
+.chip{font-family:"Cambria Math",Georgia,serif;font-size:.92em;font-weight:700;
+  padding:.22rem .6rem;border-radius:999px;border:1.5px solid var(--border);background:#fff}
+.chip.sin{color:#2e7d32;border-color:#a5d6a7}
+.chip.cos{color:#e65100;border-color:#ffcc80}
+.chip.tan{color:#6a1b9a;border-color:#ce93d8}
+.chip.r{color:var(--primary-d);border-color:#90caf9}
+.legend{font-size:.82em;color:var(--muted);margin-top:.4rem;line-height:1.7}
+.legend b{font-family:Georgia,serif}
+.sw{display:inline-block;width:.9em;height:.9em;border-radius:3px;vertical-align:-1px;margin-right:.15rem}
+/* ----- Prova tu ----- */
+.pv-q{font-weight:600;margin-bottom:.6rem;line-height:1.5}
+.pv-controls{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center}
+.pv-input{font-family:"Cambria Math",Georgia,serif;font-size:1em;padding:.45rem .6rem;
+  border:1.5px solid var(--border);border-radius:8px;width:190px;max-width:60vw}
+.pv-input:focus{outline:none;border-color:var(--primary)}
+.pv-btn{background:var(--primary);color:#fff;border:0;border-radius:8px;
+  padding:.45rem .8rem;font-size:.85em;cursor:pointer;font-family:inherit}
+.pv-btn:hover{background:var(--primary-d)}
+.pv-btn.ghost{background:#e7effa;color:var(--primary-d);border:1.5px solid var(--primary)}
+.pv-btn.ghost:hover{background:#d7e4f7}
+.pv-fb{padding:.5rem .8rem;border-radius:8px;font-size:.9em;margin-top:.7rem}
+.pv-fb.ok{background:#e8f5e9;border-left:3px solid #388e3c;color:#1b5e20}
+.pv-fb.no{background:#ffebee;border-left:3px solid #c62828;color:#b71c1c}
+.pv-hint{background:#fff8e1;border-left:3px solid #f9a825;padding:.5rem .8rem;border-radius:4px;margin-top:.6rem;font-size:.9em}
+.pv-sol{background:#f3f7fd;border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-top:.6rem;font-size:.9em}
+.pv-sol ol{margin:.2rem 0 .2rem 1.1rem}
+.pv-sol li{margin:.25rem 0}
+.pv-note{font-size:.82em;color:var(--muted);margin-top:.5rem}
+/* ----- Quiz ----- */
+.quiz-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem;font-size:.84em}
+.quiz-bar-wrap{background:#d8e2f1;border-radius:999px;height:7px;margin-bottom:.9rem;overflow:hidden}
+.quiz-bar-fill{background:var(--primary);height:100%;border-radius:999px;transition:width .35s}
+.quiz-tag{display:inline-block;font-size:.72em;font-weight:700;padding:.1rem .5rem;border-radius:999px;
+  margin-bottom:.5rem;letter-spacing:.02em}
+.quiz-tag.mc{background:#e3f2fd;color:#1565c0}
+.quiz-tag.num{background:#fff3e0;color:#ef6c00}
+.quiz-q{font-weight:600;margin:.1rem 0 .75rem;line-height:1.45;font-size:.96em}
+.quiz-opts{display:grid;gap:.4rem;margin-bottom:.45rem}
+.quiz-btn{background:#eef3fb;border:1.5px solid var(--border);border-radius:8px;
+  padding:.55rem .85rem;text-align:left;cursor:pointer;font-size:.88em;
+  font-family:inherit;color:var(--text);line-height:1.35;transition:background .12s,border-color .12s}
+.quiz-btn:not(:disabled):hover{background:#dfe9f8;border-color:var(--primary)}
+.quiz-btn:disabled{cursor:default}
+.quiz-btn.correct{background:#c8e6c9!important;border-color:#388e3c!important;color:#1b5e20;font-weight:600}
+.quiz-btn.wrong{background:#ffcdd2!important;border-color:#c62828!important;color:#b71c1c}
+.quiz-numrow{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem}
+.quiz-num{font-family:"Cambria Math",Georgia,serif;font-size:1em;padding:.45rem .6rem;
+  border:1.5px solid var(--border);border-radius:8px;width:170px;max-width:52vw}
+.quiz-num:focus{outline:none;border-color:var(--primary)}
+.quiz-check{background:var(--primary);color:#fff;border:0;border-radius:8px;padding:.45rem .9rem;font-size:.86em;cursor:pointer;font-family:inherit}
+.quiz-check:hover{background:var(--primary-d)}
+.quiz-exp{padding:.55rem .85rem;border-radius:8px;font-size:.86em;line-height:1.5;margin:.45rem 0}
+.quiz-exp.ok{background:#e8f5e9;border-left:3px solid #388e3c;color:#1b5e20}
+.quiz-exp.no{background:#ffebee;border-left:3px solid #c62828;color:#b71c1c}
+.quiz-next{background:var(--primary);color:#fff;border:0;border-radius:8px;
+  padding:.48rem 1.1rem;font-size:.88em;cursor:pointer;font-family:inherit;margin-top:.25rem}
+.quiz-next:hover{background:var(--primary-d)}
+.quiz-done{text-align:center;padding:.7rem 0}
+.quiz-score-big{font-size:2.3em;font-weight:800;color:var(--primary-d);display:block;margin-bottom:.25rem}
+.quiz-msg{color:var(--muted);margin:.15rem 0 .8rem;font-size:.93em}
+.quiz-actions{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.quiz-restart,.quiz-review{background:var(--primary);color:#fff;border:0;border-radius:8px;
+  padding:.48rem 1.1rem;font-size:.88em;cursor:pointer;font-family:inherit}
+.quiz-restart:hover,.quiz-review:hover{background:var(--primary-d)}
+.quiz-review.alt{background:#e7effa;color:var(--primary-d);border:1.5px solid var(--primary)}
+.quiz-review.alt:hover{background:#d7e4f7}
+.rv-item{border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin:.5rem 0;background:#f8fbff}
+.rv-item.ok{border-left:4px solid #388e3c}
+.rv-item.no{border-left:4px solid #c62828}
+.rv-q{font-weight:600;font-size:.93em;margin-bottom:.3rem}
+.rv-line{font-size:.85em;margin:.1rem 0;color:var(--muted)}
+.rv-line b.ok{color:#1b5e20}
+.rv-line b.no{color:#b71c1c}
+.rv-exp{font-size:.83em;color:var(--text);margin-top:.3rem;font-style:italic}
+</style>
+</head>
+<body>
+<header>
+  <h1>📐 Goniometria e trigonometria</h1>
+  <div class="sub">Teoria · simulazioni · esercizi · quiz</div>
+</header>
+<nav class="main" id="mainNav">
+  <button data-tab="home" class="active">🏠 Home</button>
+  <button data-tab="gonio">🧭 Goniometria</button>
+  <button data-tab="noti">📐 Archi noti</button>
+  <button data-tab="assoc">🔄 Archi associati</button>
+  <button data-tab="rel">🔗 Relazioni fondamentali</button>
+  <button data-tab="eqgon">⚖️ Equazioni</button>
+  <button data-tab="rett">📏 Triangoli rettangoli</button>
+  <button data-tab="corda">⭕ Teorema della corda</button>
+  <button data-tab="seni">🔺 Teorema dei seni</button>
+  <button data-tab="carnot">🧮 Teorema di Carnot</button>
+</nav>
+<main>
+
+<!-- =================== HOME =================== -->
+<section class="scene active" id="home">
+  <div class="card">
+    <h2>Dalla circonferenza goniometrica ai triangoli</h2>
+    <p>La <strong>goniometria</strong> studia gli angoli e le funzioni che li misurano (seno, coseno, tangente); la <strong>trigonometria</strong> usa queste funzioni per «risolvere» i triangoli, cioè ricavarne lati e angoli. Questa app accompagna il percorso completo, dalla <em>circonferenza goniometrica</em> fino ai grandi teoremi sui triangoli.</p>
+    <p>Ogni sezione è organizzata sempre nello stesso modo, in <strong>quattro parti</strong>:</p>
+    <ul>
+      <li>📖 <strong>Teoria</strong> — concetti, formule e figure;</li>
+      <li>🎛️ <strong>Simulazioni</strong> — circonferenza, grafici e triangoli con parametri regolabili e animazioni;</li>
+      <li>✍️ <strong>Prova tu</strong> — esercizi guidati con suggerimenti e soluzione passo-passo;</li>
+      <li>🧩 <strong>Quiz</strong> — domande a scelta multipla e calcoli numerici con validazione.</li>
+    </ul>
+    <div class="tip">💡 Consiglio: parti dalla <strong>Goniometria</strong>, costruisci l'intuizione con le <strong>Simulazioni</strong>, poi allenati con <strong>Prova tu</strong> e verifica con il <strong>Quiz</strong>.</div>
+  </div>
+
+  <div class="part-label">🧭 Parte 1 — Goniometria</div>
+  <div class="home-grid">
+    <button class="home-card" data-go="gonio"><span class="ico">🧭</span><strong>Goniometria</strong><span>Angoli, radianti, circonferenza goniometrica, seno, coseno, tangente</span></button>
+    <button class="home-card" data-go="noti"><span class="ico">📐</span><strong>Archi noti</strong><span>0°, 30°, 45°, 60°, 90° e i loro multipli: i valori da sapere</span></button>
+    <button class="home-card" data-go="assoc"><span class="ico">🔄</span><strong>Archi associati</strong><span>Opposti, supplementari, complementari: ridurre al 1º quadrante</span></button>
+    <button class="home-card" data-go="rel"><span class="ico">🔗</span><strong>Relazioni fondamentali</strong><span>sin²+cos²=1, tangente e cotangente, una funzione dalle altre</span></button>
+    <button class="home-card" data-go="eqgon"><span class="ico">⚖️</span><strong>Equazioni goniometriche</strong><span>Elementari, lineari e omogenee, con applicazioni</span></button>
+  </div>
+
+  <div class="part-label">📏 Parte 2 — Trigonometria dei triangoli</div>
+  <div class="home-grid">
+    <button class="home-card" data-go="rett"><span class="ico">📏</span><strong>Triangoli rettangoli</strong><span>I due teoremi: cateti, ipotenusa, seni, coseni e tangenti</span></button>
+    <button class="home-card" data-go="corda"><span class="ico">⭕</span><strong>Teorema della corda</strong><span>Corda = diametro × seno dell'angolo alla circonferenza</span></button>
+    <button class="home-card" data-go="seni"><span class="ico">🔺</span><strong>Teorema dei seni</strong><span>a/sin α = 2R: lato e seno dell'angolo opposto</span></button>
+    <button class="home-card" data-go="carnot"><span class="ico">🧮</span><strong>Teorema di Carnot</strong><span>a² = b² + c² − 2bc·cos α: il «Pitagora generalizzato»</span></button>
+  </div>
+</section>
+<!-- =================== GONIOMETRIA =================== -->
+<section class="scene" id="gonio">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>🧭 Angoli, archi e loro misura</h2>
+      <p>Un <strong>angolo</strong> si può misurare in due unità. In gradi <strong>sessagesimali</strong> l'angolo giro vale 360°. In <strong>radianti</strong> la misura di un angolo al centro è il rapporto tra l'arco che esso sottende e il raggio:</p>
+      <div class="formula">α(rad) = arco / raggio  ⟹  angolo giro = 2π rad</div>
+      <p>La conversione tra le due unità sfrutta la proporzione 180° : π = gradi : radianti:</p>
+      <div class="formula">rad = gradi · π/180   ;   gradi = rad · 180/π</div>
+      <table class="tbl">
+        <tr><th>gradi</th><td>0°</td><td>30°</td><td>45°</td><td>60°</td><td>90°</td><td>180°</td><td>270°</td><td>360°</td></tr>
+        <tr><th>radianti</th><td>0</td><td>π/6</td><td>π/4</td><td>π/3</td><td>π/2</td><td>π</td><td>3π/2</td><td>2π</td></tr>
+      </table>
+      <div class="ex"><b>Es.</b> 135° = 135·π/180 = 3π/4 rad ; &nbsp; 5π/6 rad = (5π/6)·180/π = 150°.</div>
+    </div>
+
+    <div class="card">
+      <h2>La circonferenza goniometrica</h2>
+      <p>È la circonferenza di <strong>raggio 1</strong> con centro nell'origine di un sistema di assi. Un angolo orientato α (positivo in verso <strong>antiorario</strong>) individua su di essa un punto <strong>P</strong>. Le funzioni goniometriche sono le coordinate di P:</p>
+      <div class="formula">cos α = ascissa di P   ;   sin α = ordinata di P</div>
+      <p>Poiché P sta sulla circonferenza di raggio 1, si ha sempre <strong>−1 ≤ sin α ≤ 1</strong> e <strong>−1 ≤ cos α ≤ 1</strong>. La <strong>tangente</strong> è l'ordinata del punto in cui la retta OP incontra la retta verticale x = 1 (l'«asse delle tangenti»):</p>
+      <div class="formula">tan α = sin α / cos α   (con cos α ≠ 0)</div>
+      <div class="diagram"><canvas id="cv-gonio-circle"></canvas><p class="cap">Per α = 40°: il coseno è il segmento orizzontale (arancio), il seno quello verticale (verde), la tangente è letta sull'asse x = 1 (viola).</p></div>
+      <p>Si definiscono anche le funzioni reciproche: <strong>cotangente</strong> cot α = cos α/sin α = 1/tan α, <strong>secante</strong> sec α = 1/cos α e <strong>cosecante</strong> csc α = 1/sin α.</p>
+    </div>
+
+    <div class="card">
+      <h2>Segno nei quattro quadranti</h2>
+      <p>Il segno di seno e coseno dipende dal quadrante in cui cade P; quello della tangente è il loro rapporto:</p>
+      <table class="tbl">
+        <tr><th>quadrante</th><th>angolo</th><th>sin</th><th>cos</th><th>tan</th></tr>
+        <tr><td class="lead">I</td><td>0°–90°</td><td>+</td><td>+</td><td>+</td></tr>
+        <tr><td class="lead">II</td><td>90°–180°</td><td>+</td><td>−</td><td>−</td></tr>
+        <tr><td class="lead">III</td><td>180°–270°</td><td>−</td><td>−</td><td>+</td></tr>
+        <tr><td class="lead">IV</td><td>270°–360°</td><td>−</td><td>+</td><td>−</td></tr>
+      </table>
+      <div class="tip">📌 Il seno «segue» l'asse y (positivo in alto), il coseno «segue» l'asse x (positivo a destra).</div>
+    </div>
+
+    <div class="card">
+      <h2>I grafici delle funzioni goniometriche</h2>
+      <p>Riportando α sull'asse delle ascisse si ottengono le curve di seno e coseno: la <strong>sinusoide</strong> e la <strong>cosinusoide</strong>. Sono periodiche di periodo <strong>2π</strong> e oscillano tra −1 e 1; il coseno è la sinusoide traslata di π/2.</p>
+      <div class="formula">sin(α + 2π) = sin α   ;   cos(α + 2π) = cos α</div>
+      <div class="diagram"><canvas id="cv-gonio-graph"></canvas><p class="cap">y = sin x (verde) e y = cos x (arancio) sull'intervallo [−2π, 2π].</p></div>
+      <p>La <strong>tangente</strong> ha periodo π e presenta asintoti verticali dove cos x = 0, cioè per x = π/2 + kπ.</p>
+      <div class="formula">tan(α + π) = tan α   ;   dominio: x ≠ π/2 + kπ</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ Esplora la circonferenza goniometrica</h2>
+      <p>Muovi l'angolo e osserva come variano seno, coseno e tangente sul cerchio unitario.</p>
+      <div class="diagram"><canvas id="cv-gonio-sim"></canvas></div>
+      <div class="readout">
+        <span class="chip r" id="go-ang">α = 40°</span>
+        <span class="chip sin" id="go-sin">sin = 0,643</span>
+        <span class="chip cos" id="go-cos">cos = 0,766</span>
+        <span class="chip tan" id="go-tan">tan = 0,839</span>
+      </div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>angolo α</label><input type="range" id="go-a" min="0" max="360" step="1" value="40" oninput="smGonio()"><span class="v" id="go-a-val">40°</span></div>
+        <div class="ctrl chk"><input type="checkbox" id="go-csin" checked onchange="smGonio()"><label for="go-csin">seno</label>
+          <input type="checkbox" id="go-ccos" checked onchange="smGonio()"><label for="go-ccos">coseno</label>
+          <input type="checkbox" id="go-ctan" onchange="smGonio()"><label for="go-ctan">tangente</label></div>
+        <div><button class="btn" id="go-anim" onclick="toggleAnim(this,{slider:'go-a',from:0,to:360,step:1,wrap:true,update:smGonio})">▶ Anima l'angolo</button></div>
+      </div>
+      <div class="sim-fb" id="go-fb"></div>
+      <p class="legend"><span class="sw" style="background:#1565c0"></span>raggio OP &nbsp; <span class="sw" style="background:#2e7d32"></span>seno &nbsp; <span class="sw" style="background:#ef6c00"></span>coseno &nbsp; <span class="sw" style="background:#7b1fa2"></span>tangente</p>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-gonio"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-gonio"></div></div>
+</section>
+<!-- =================== ARCHI NOTI =================== -->
+<section class="scene" id="noti">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>📐 Gli archi (angoli) notevoli</h2>
+      <p>Alcuni angoli compaiono di continuo: 0°, 30°, 45°, 60°, 90° e i loro multipli. I loro valori si ricavano da semplici triangoli e vanno conosciuti a memoria.</p>
+      <h3>L'angolo di 45° (π/4)</h3>
+      <p>Nasce da un triangolo rettangolo <strong>isoscele</strong>: i due cateti sono uguali, quindi i due angoli acuti valgono 45°. Per simmetria seno e coseno coincidono e, dalla relazione sin² + cos² = 1, si ottiene:</p>
+      <div class="formula">sin 45° = cos 45° = √2/2 ≈ 0,707 ;  tan 45° = 1</div>
+      <h3>Gli angoli di 30° e 60° (π/6 e π/3)</h3>
+      <p>Si ricavano dalla metà di un triangolo <strong>equilatero</strong>. Con ipotenusa 1, il cateto opposto a 30° è metà ipotenusa, l'altro è la sua altezza:</p>
+      <div class="diagram"><canvas id="cv-noti-tri"></canvas><p class="cap">Triangolo 30°-60°-90° con ipotenusa 1: il lato opposto a 30° vale 1/2, quello opposto a 60° vale √3/2.</p></div>
+      <div class="formula">sin 30° = 1/2 ;  cos 30° = √3/2 ;  tan 30° = √3/3</div>
+      <div class="formula">sin 60° = √3/2 ;  cos 60° = 1/2 ;  tan 60° = √3</div>
+    </div>
+
+    <div class="card">
+      <h2>La tabella dei valori del 1º quadrante</h2>
+      <table class="tbl">
+        <tr><th>α</th><td class="lead">0°</td><td class="lead">30°</td><td class="lead">45°</td><td class="lead">60°</td><td class="lead">90°</td></tr>
+        <tr><th>sin</th><td>0</td><td>1/2</td><td>√2/2</td><td>√3/2</td><td>1</td></tr>
+        <tr><th>cos</th><td>1</td><td>√3/2</td><td>√2/2</td><td>1/2</td><td>0</td></tr>
+        <tr><th>tan</th><td>0</td><td>√3/3</td><td>1</td><td>√3</td><td>∄</td></tr>
+      </table>
+      <div class="tip">📌 <b>Trucco mnemonico:</b> per il seno scrivi 0, 1, 2, 3, 4 sotto radice e dividi per 2: sin = √0/2, √1/2, √2/2, √3/2, √4/2. Per il coseno la stessa sequenza al contrario.</div>
+      <div class="warn">⚠️ A 90° la tangente <strong>non esiste</strong>: il coseno è nullo e non si può dividere per zero.</div>
+    </div>
+
+    <div class="card">
+      <h2>Oltre il primo quadrante</h2>
+      <p>I valori degli altri quadranti si ottengono da quelli del primo applicando le regole degli <strong>archi associati</strong> (sezione successiva) e i segni di ciascun quadrante. La figura mostra dove cadono i punti notevoli sulla circonferenza.</p>
+      <div class="diagram"><canvas id="cv-noti-circle"></canvas><p class="cap">I principali archi notevoli sulla circonferenza goniometrica (multipli di 30° e di 45°).</p></div>
+      <div class="ex"><b>Es.</b> sin 150° = sin(180°−30°) = sin 30° = 1/2 ; &nbsp; cos 240° = cos(180°+60°) = −cos 60° = −1/2.</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ I valori esatti degli archi notevoli</h2>
+      <p>Scegli un angolo notevole: il cerchio mostra il punto corrispondente e i valori <strong>esatti</strong> delle funzioni goniometriche.</p>
+      <div class="diagram"><canvas id="cv-noti-sim"></canvas></div>
+      <div class="readout">
+        <span class="chip sin" id="nt-sin">sin = ½</span>
+        <span class="chip cos" id="nt-cos">cos = √3/2</span>
+        <span class="chip tan" id="nt-tan">tan = √3/3</span>
+      </div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>angolo</label>
+          <select id="nt-sel" onchange="smNoti()">
+            <option value="0">0° (0)</option>
+            <option value="30" selected>30° (π/6)</option>
+            <option value="45">45° (π/4)</option>
+            <option value="60">60° (π/3)</option>
+            <option value="90">90° (π/2)</option>
+            <option value="120">120° (2π/3)</option>
+            <option value="135">135° (3π/4)</option>
+            <option value="150">150° (5π/6)</option>
+            <option value="180">180° (π)</option>
+            <option value="210">210° (7π/6)</option>
+            <option value="225">225° (5π/4)</option>
+            <option value="240">240° (4π/3)</option>
+            <option value="270">270° (3π/2)</option>
+            <option value="300">300° (5π/3)</option>
+            <option value="315">315° (7π/4)</option>
+            <option value="330">330° (11π/6)</option>
+            <option value="360">360° (2π)</option>
+          </select>
+        </div>
+      </div>
+      <div class="sim-fb" id="nt-fb"></div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-noti"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-noti"></div></div>
+</section>
+<!-- =================== ARCHI ASSOCIATI =================== -->
+<section class="scene" id="assoc">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>🔄 Archi associati a un angolo α</h2>
+      <p>Due archi si dicono <strong>associati</strong> quando i loro punti sulla circonferenza sono simmetrici. Le relazioni che ne derivano permettono di <strong>ricondurre qualsiasi angolo al primo quadrante</strong>, dove i valori sono noti.</p>
+      <div class="diagram"><canvas id="cv-assoc-circle"></canvas><p class="cap">α e il suo supplementare π − α: i punti sono simmetrici rispetto all'asse y, quindi hanno lo stesso seno e coseni opposti.</p></div>
+    </div>
+
+    <div class="card">
+      <h2>Archi opposti (−α) e supplementari (π − α)</h2>
+      <h3>Opposti: −α (simmetria rispetto all'asse x)</h3>
+      <div class="formula">sin(−α) = −sin α ;  cos(−α) = cos α ;  tan(−α) = −tan α</div>
+      <p>Il coseno è una funzione <strong>pari</strong> (non cambia), seno e tangente sono <strong>dispari</strong> (cambiano segno).</p>
+      <h3>Supplementari: π − α (simmetria rispetto all'asse y)</h3>
+      <div class="formula">sin(π − α) = sin α ;  cos(π − α) = −cos α ;  tan(π − α) = −tan α</div>
+      <div class="ex"><b>Es.</b> sin 120° = sin(180°−60°) = sin 60° = √3/2 ; &nbsp; cos 135° = −cos 45° = −√2/2.</div>
+    </div>
+
+    <div class="card">
+      <h2>Archi che differiscono di π e esplementari</h2>
+      <h3>π + α (simmetria rispetto all'origine)</h3>
+      <div class="formula">sin(π + α) = −sin α ;  cos(π + α) = −cos α ;  tan(π + α) = tan α</div>
+      <p>Seno e coseno cambiano segno; la <strong>tangente resta invariata</strong> (ha periodo π).</p>
+      <h3>Esplementari: 2π − α  (equivalenti a −α)</h3>
+      <div class="formula">sin(2π − α) = −sin α ;  cos(2π − α) = cos α ;  tan(2π − α) = −tan α</div>
+      <div class="ex"><b>Es.</b> cos 210° = cos(180°+30°) = −cos 30° = −√3/2 ; &nbsp; sin 300° = sin(360°−60°) = −sin 60° = −√3/2.</div>
+    </div>
+
+    <div class="card">
+      <h2>Archi complementari e la simmetria seno ↔ coseno</h2>
+      <h3>Complementari: π/2 − α (simmetria rispetto alla bisettrice y = x)</h3>
+      <p>Qui seno e coseno si <strong>scambiano</strong> (da cui il nome «co-seno», seno del complementare):</p>
+      <div class="formula">sin(π/2 − α) = cos α ;  cos(π/2 − α) = sin α ;  tan(π/2 − α) = cotα</div>
+      <h3>π/2 + α</h3>
+      <div class="formula">sin(π/2 + α) = cos α ;  cos(π/2 + α) = −sin α ;  tan(π/2 + α) = −cotα</div>
+      <div class="ex"><b>Es.</b> sin 90° = cos 0° = 1 ; &nbsp; cos 60° = sin 30° = 1/2 ; &nbsp; sin(π/2 + 20°) = cos 20°.</div>
+      <div class="tip">📌 <b>Strategia generale.</b> Per un angolo qualunque: 1) togli i giri interi (k·360°); 2) usa l'arco associato per scendere nel 1º quadrante; 3) applica il segno del quadrante di partenza.</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ Confronta α con il suo arco associato</h2>
+      <p>Scegli un angolo acuto α e un tipo di associazione: la simulazione mostra i due punti e le relazioni tra le funzioni.</p>
+      <div class="diagram"><canvas id="cv-assoc-sim"></canvas></div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>angolo α</label><input type="range" id="as-a" min="5" max="85" step="1" value="35" oninput="smAssoc()"><span class="v" id="as-a-val">35°</span></div>
+        <div class="ctrl"><label>associato</label>
+          <select id="as-type" onchange="smAssoc()">
+            <option value="opp">opposto: −α</option>
+            <option value="sup" selected>supplementare: π − α</option>
+            <option value="pi">π + α</option>
+            <option value="esp">esplementare: 2π − α</option>
+            <option value="comp">complementare: π/2 − α</option>
+            <option value="copi">π/2 + α</option>
+          </select>
+        </div>
+      </div>
+      <div class="sim-fb" id="as-fb"></div>
+      <p class="legend"><span class="sw" style="background:#1565c0"></span>α &nbsp; <span class="sw" style="background:#c2185b"></span>arco associato</p>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-assoc"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-assoc"></div></div>
+</section>
+<!-- =================== RELAZIONI FONDAMENTALI =================== -->
+<section class="scene" id="rel">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>🔗 La prima relazione fondamentale</h2>
+      <p>Il punto P = (cos α, sin α) sta sulla circonferenza di raggio 1. Il triangolo rettangolo che ha per cateti il coseno e il seno e per ipotenusa il raggio dà, per il teorema di Pitagora, l'identità più importante della goniometria:</p>
+      <div class="formula">sin²α + cos²α = 1</div>
+      <div class="diagram"><canvas id="cv-rel-circle"></canvas><p class="cap">Cateti cos α e sin α, ipotenusa 1: per Pitagora cos²α + sin²α = 1, valida per ogni α.</p></div>
+      <p>Da essa si ricava una funzione dall'altra (il segno dipende dal quadrante):</p>
+      <div class="formula">sin α = ±√(1 − cos²α) ;  cos α = ±√(1 − sin²α)</div>
+    </div>
+
+    <div class="card">
+      <h2>La seconda relazione fondamentale</h2>
+      <p>Lega la tangente alle altre due funzioni:</p>
+      <div class="formula">tan α = sin α / cos α   (cos α ≠ 0)</div>
+      <p>La <strong>cotangente</strong> è il suo reciproco:</p>
+      <div class="formula">cot α = cos α / sin α = 1 / tan α   (sin α ≠ 0)</div>
+      <h3>Relazioni derivate</h3>
+      <p>Dividendo sin²α + cos²α = 1 per cos²α oppure per sin²α si ottengono:</p>
+      <div class="formula">1 + tan²α = 1 / cos²α ;  1 + cot²α = 1 / sin²α</div>
+      <p>Da cui, noto il valore della tangente:</p>
+      <div class="formula">cos α = ±1/√(1 + tan²α) ;  sin α = ±tan α/√(1 + tan²α)</div>
+    </div>
+
+    <div class="card">
+      <h2>Esempi di calcolo</h2>
+      <div class="ex"><b>Es. 1.</b> Sapendo che sin α = 3/5 con α nel 1º quadrante, trova cos α e tan α.<br>
+      cos α = +√(1 − 9/25) = √(16/25) = 4/5 ; &nbsp; tan α = (3/5)/(4/5) = 3/4.</div>
+      <div class="ex"><b>Es. 2.</b> Se cos α = −5/13 con α nel 2º quadrante (sin &gt; 0): sin α = +√(1 − 25/169) = 12/13 ; &nbsp; tan α = (12/13)/(−5/13) = −12/5.</div>
+      <div class="warn">⚠️ La scelta del segno della radice non è mai automatica: dipende dal <strong>quadrante</strong> in cui si trova l'angolo.</div>
+      <div class="tip">📌 Queste relazioni servono a semplificare espressioni, dimostrare identità e ricavare i dati mancanti nelle equazioni e nei triangoli.</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ Verifica sin²α + cos²α = 1</h2>
+      <p>Qualunque sia l'angolo, la somma dei quadrati di seno e coseno resta esattamente 1: è l'area dei due quadrati costruiti sui cateti uguale al quadrato sull'ipotenusa (di lato 1).</p>
+      <div class="diagram"><canvas id="cv-rel-sim"></canvas></div>
+      <div class="readout">
+        <span class="chip sin" id="rl-sin">sin = 0,574</span>
+        <span class="chip cos" id="rl-cos">cos = 0,819</span>
+        <span class="chip r" id="rl-sum">sin² + cos² = 1,000</span>
+      </div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>angolo α</label><input type="range" id="rl-a" min="0" max="360" step="1" value="35" oninput="smRel()"><span class="v" id="rl-a-val">35°</span></div>
+        <div><button class="btn" id="rl-anim" onclick="toggleAnim(this,{slider:'rl-a',from:0,to:360,step:1,wrap:true,update:smRel})">▶ Anima l'angolo</button></div>
+      </div>
+      <div class="sim-fb" id="rl-fb"></div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-rel"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-rel"></div></div>
+</section>
+<!-- =================== EQUAZIONI GONIOMETRICHE =================== -->
+<section class="scene" id="eqgon">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>⚖️ Equazioni goniometriche elementari</h2>
+      <p>Sono del tipo sin x = m, cos x = m, tan x = m. Poiché le funzioni sono <strong>periodiche</strong>, le soluzioni sono infinite e si scrivono con un parametro intero k ∈ ℤ.</p>
+      <div class="formula">sin x = m  (−1 ≤ m ≤ 1)  ⟹  x = α + 2kπ  ∨  x = π − α + 2kπ</div>
+      <div class="formula">cos x = m  (−1 ≤ m ≤ 1)  ⟹  x = ±α + 2kπ</div>
+      <div class="formula">tan x = m  (∀ m)  ⟹  x = α + kπ</div>
+      <p>dove α è l'arco «di riferimento» (α = arcsin m, arccos m oppure arctan m). Se |m| &gt; 1 le equazioni in seno e coseno <strong>non hanno soluzioni</strong>.</p>
+      <div class="diagram"><canvas id="cv-eq-th"></canvas><p class="cap">sin x = 1/2 in [0, 2π): due soluzioni, x = π/6 e x = 5π/6, dove la sinusoide incontra la retta y = 1/2.</p></div>
+      <div class="ex"><b>Es.</b> cos x = √2/2 ⟹ x = ±π/4 + 2kπ. &nbsp; tan x = 1 ⟹ x = π/4 + kπ.</div>
+    </div>
+
+    <div class="card">
+      <h2>Equazioni riconducibili a elementari</h2>
+      <p>Si usano scomposizioni, sostituzioni e le relazioni fondamentali per arrivare a una forma elementare.</p>
+      <h3>Con uguaglianza di funzioni</h3>
+      <div class="formula">sin A = sin B ⟹ A = B + 2kπ ∨ A = π − B + 2kπ</div>
+      <div class="formula">cos A = cos B ⟹ A = ±B + 2kπ ;  tan A = tan B ⟹ A = B + kπ</div>
+      <h3>Per sostituzione o scomposizione</h3>
+      <div class="ex"><b>Es.</b> 2sin²x − sin x − 1 = 0. Pongo t = sin x: 2t² − t − 1 = 0 ⟹ t = 1 ∨ t = −1/2. Quindi sin x = 1 ⟹ x = π/2 + 2kπ; sin x = −1/2 ⟹ x = −π/6 + 2kπ ∨ x = 7π/6 + 2kπ.</div>
+      <div class="warn">⚠️ Se compaiono sin e cos «mescolati» con potenze diverse, prima si prova a usare sin²x = 1 − cos²x per ottenere una sola funzione.</div>
+    </div>
+
+    <div class="card">
+      <h2>Equazioni lineari in seno e coseno</h2>
+      <p>Hanno la forma a·sin x + b·cos x = c. Il caso <strong>senza termine noto</strong> (c = 0) è il più semplice: se b ≠ 0 si divide per cos x ottenendo un'equazione in tangente.</p>
+      <div class="formula">a·sin x + b·cos x = 0  ⟹  tan x = −b/a   (a ≠ 0)</div>
+      <p>Con c ≠ 0 si possono usare le formule parametriche (t = tan(x/2)) oppure il metodo dell'angolo aggiunto R·sin(x + φ) = c.</p>
+      <div class="ex"><b>Es.</b> sin x − cos x = 0 ⟹ tan x = 1 ⟹ x = π/4 + kπ.</div>
+    </div>
+
+    <div class="card">
+      <h2>Equazioni omogenee di 2º grado</h2>
+      <p>Sono della forma, con tutti i termini di «secondo grado» in seno e coseno:</p>
+      <div class="formula">a·sin²x + b·sin x·cos x + c·cos²x = 0</div>
+      <p>Poiché cos x = 0 non è soluzione (se lo fosse resterebbe a·sin²x = 0 con sin x = ±1, impossibile per a ≠ 0), si può <strong>dividere tutto per cos²x</strong>. Si ottiene un'equazione di 2º grado nella tangente:</p>
+      <div class="formula">a·tan²x + b·tan x + c = 0</div>
+      <div class="ex"><b>Es.</b> sin²x − 3 sin x cos x + 2 cos²x = 0. Divido per cos²x: tan²x − 3 tan x + 2 = 0 ⟹ tan x = 1 ∨ tan x = 2 ⟹ x = π/4 + kπ ∨ x = arctan 2 + kπ.</div>
+      <h3>Omogenee «complete» (con termine noto)</h3>
+      <p>Se c'è un termine noto d, si sfrutta l'identità 1 = sin²x + cos²x per renderlo omogeneo:</p>
+      <div class="formula">a·sin²x + b·sin x cos x + c·cos²x = d·(sin²x + cos²x)</div>
+      <p>portando tutto a primo membro si ricade in un'equazione omogenea, di nuovo divisibile per cos²x.</p>
+      <div class="ex"><b>Es.</b> 2sin²x + sin x cos x = 1. Scrivo 1 = sin²x + cos²x: 2sin²x + sin x cos x − sin²x − cos²x = 0 ⟹ sin²x + sin x cos x − cos²x = 0 ⟹ tan²x + tan x − 1 = 0.</div>
+      <div class="tip">📌 <b>Applicazioni.</b> Le equazioni goniometriche descrivono fenomeni periodici (oscillazioni, onde, moti circolari) e intervengono nei problemi sui triangoli, dove l'incognita è un angolo.</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ Risolvi f(x) = m graficamente</h2>
+      <p>Le soluzioni di sin x = m (o cos x = m, tan x = m) sono le ascisse dei punti in cui il grafico incontra la retta orizzontale y = m. Qui sono evidenziate quelle nell'intervallo [0, 2π).</p>
+      <div class="diagram"><canvas id="cv-eq-sim"></canvas></div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>funzione</label>
+          <select id="eq-f" onchange="smEq()">
+            <option value="sin" selected>sin x</option>
+            <option value="cos">cos x</option>
+            <option value="tan">tan x</option>
+          </select>
+        </div>
+        <div class="ctrl"><label>valore m</label><input type="range" id="eq-m" min="-2" max="2" step="0.05" value="0.5" oninput="smEq()"><span class="v" id="eq-m-val">0,50</span></div>
+        <div><button class="btn" id="eq-anim" onclick="toggleAnim(this,{slider:'eq-m',from:-1.5,to:1.5,step:0.03,update:smEq})">▶ Anima m</button></div>
+      </div>
+      <div class="sim-fb" id="eq-fb"></div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-eqgon"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-eqgon"></div></div>
+</section>
+<!-- =================== TRIANGOLI RETTANGOLI =================== -->
+<section class="scene" id="rett">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>📏 Risolvere un triangolo rettangolo</h2>
+      <p>Consideriamo un triangolo rettangolo ABC con l'angolo retto in <strong>C</strong>: l'ipotenusa è <em>c</em> = AB, i cateti sono <em>a</em> = BC e <em>b</em> = AC, e gli angoli acuti α (in A) e β (in B) sono <strong>complementari</strong> (α + β = 90°).</p>
+      <div class="diagram"><canvas id="cv-rett-th"></canvas><p class="cap">Triangolo rettangolo: ipotenusa c, cateti a e b, angoli acuti α e β con α + β = 90°.</p></div>
+    </div>
+
+    <div class="card">
+      <h2>1º teorema dei triangoli rettangoli</h2>
+      <p>Un <strong>cateto</strong> è uguale all'ipotenusa per il <strong>seno dell'angolo opposto</strong>, oppure per il <strong>coseno dell'angolo adiacente</strong>:</p>
+      <div class="formula">a = c·sin α = c·cos β</div>
+      <div class="formula">b = c·sin β = c·cos α</div>
+      <p>È la traduzione diretta delle definizioni nel triangolo: sin α = cateto opposto / ipotenusa = a/c, cos α = cateto adiacente / ipotenusa = b/c.</p>
+    </div>
+
+    <div class="card">
+      <h2>2º teorema dei triangoli rettangoli</h2>
+      <p>Un <strong>cateto</strong> è uguale all'altro cateto per la <strong>tangente dell'angolo opposto</strong> al primo, oppure per la <strong>cotangente dell'angolo adiacente</strong>:</p>
+      <div class="formula">a = b·tan α = b·cot β</div>
+      <div class="formula">b = a·tan β = a·cot α</div>
+      <p>Le formule «inverse» permettono di ricavare gli angoli dai lati:</p>
+      <div class="formula">sin α = a/c ;  cos α = b/c ;  tan α = a/b</div>
+      <h3>Esempio completo</h3>
+      <div class="ex"><b>Es.</b> Dati c = 10 e α = 30°, trova i cateti.<br>
+      a = c·sin α = 10·sin 30° = 10·(1/2) = 5 ;<br>
+      b = c·cos α = 10·cos 30° = 10·(√3/2) = 5√3 ≈ 8,66 ;<br>
+      β = 90° − 30° = 60°. &nbsp; Area = (1/2)·a·b = (1/2)·5·5√3 ≈ 21,65.</div>
+      <div class="tip">📌 Per «risolvere» un triangolo rettangolo bastano due dati oltre all'angolo retto, di cui almeno un lato.</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ Costruisci il triangolo rettangolo</h2>
+      <p>Regola l'ipotenusa c e l'angolo α: i cateti si calcolano con il 1º teorema.</p>
+      <div class="diagram"><canvas id="cv-rett-sim"></canvas></div>
+      <div class="readout">
+        <span class="chip r" id="re-c">c = 6,0</span>
+        <span class="chip sin" id="re-a">a = 3,00</span>
+        <span class="chip cos" id="re-b">b = 5,20</span>
+        <span class="chip tan" id="re-beta">β = 60°</span>
+      </div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>ipotenusa c</label><input type="range" id="re-cc" min="2" max="10" step="0.1" value="6" oninput="smRett()"><span class="v" id="re-cc-val">6,0</span></div>
+        <div class="ctrl"><label>angolo α</label><input type="range" id="re-aa" min="10" max="80" step="1" value="30" oninput="smRett()"><span class="v" id="re-aa-val">30°</span></div>
+        <div><button class="btn" id="re-anim" onclick="toggleAnim(this,{slider:'re-aa',from:10,to:80,step:0.5,update:smRett})">▶ Anima α</button></div>
+      </div>
+      <div class="sim-fb" id="re-fb"></div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-rett"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-rett"></div></div>
+</section>
+<!-- =================== TEOREMA DELLA CORDA =================== -->
+<section class="scene" id="corda">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>⭕ Il teorema della corda</h2>
+      <p>In una circonferenza di raggio R, una <strong>corda</strong> AB è legata all'<strong>angolo alla circonferenza</strong> γ che «insiste» su di essa (cioè la vede, con vertice sull'arco opposto):</p>
+      <div class="formula">AB = 2R · sin γ</div>
+      <p>In parole: <em>una corda è uguale al prodotto del diametro (2R) per il seno di uno qualunque degli angoli alla circonferenza che insistono su di essa</em>.</p>
+      <div class="diagram"><canvas id="cv-corda-th"></canvas><p class="cap">La corda AB e l'angolo alla circonferenza γ in C: vale AB = 2R·sin γ, qualunque sia la posizione di C sull'arco.</p></div>
+    </div>
+
+    <div class="card">
+      <h2>Perché funziona</h2>
+      <p>L'angolo al centro AÔB che insiste sulla stessa corda è il <strong>doppio</strong> dell'angolo alla circonferenza: AÔB = 2γ. Il triangolo isoscele AOB (con OA = OB = R) ha, tracciando l'altezza dal centro, due triangoli rettangoli con angolo γ al centro e mezza corda come cateto opposto:</p>
+      <div class="formula">AB/2 = R · sin γ  ⟹  AB = 2R · sin γ</div>
+      <p>Poiché tutti gli angoli alla circonferenza che insistono sulla stessa corda sono <strong>uguali</strong>, il risultato non dipende da dove si sceglie il vertice C.</p>
+      <div class="warn">⚠️ Se γ è ottuso si usa lo stesso valore di sin γ (gli angoli supplementari hanno lo stesso seno): la formula resta valida.</div>
+    </div>
+
+    <div class="card">
+      <h2>A cosa serve</h2>
+      <p>Il teorema collega corde, raggio e angoli: permette di calcolare il <strong>raggio</strong> nota una corda e l'angolo che la vede, oppure la <strong>corda</strong> noti raggio e angolo. È il «ponte» verso il teorema dei seni.</p>
+      <div class="ex"><b>Es.</b> Corda AB = 12 vista sotto un angolo alla circonferenza γ = 30°.<br>
+      Da AB = 2R·sin γ: 12 = 2R·sin 30° = 2R·(1/2) = R ⟹ R = 12. Il diametro è 24.</div>
+      <div class="ex"><b>Es.</b> In una circonferenza di raggio R = 5, la corda vista sotto γ = 45° vale AB = 2·5·sin 45° = 10·(√2/2) = 5√2 ≈ 7,07.</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ Corda, raggio e angolo alla circonferenza</h2>
+      <p>Regola il raggio R e l'angolo alla circonferenza γ: la corda AB si adatta secondo AB = 2R·sin γ. Nota che l'angolo al centro è sempre il doppio.</p>
+      <div class="diagram"><canvas id="cv-corda-sim"></canvas></div>
+      <div class="readout">
+        <span class="chip r" id="cd-R">R = 5,0</span>
+        <span class="chip sin" id="cd-g">γ = 50°</span>
+        <span class="chip cos" id="cd-ab">AB = 7,66</span>
+        <span class="chip tan" id="cd-cen">centro = 100°</span>
+      </div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>raggio R</label><input type="range" id="cd-RR" min="2" max="8" step="0.1" value="5" oninput="smCorda()"><span class="v" id="cd-RR-val">5,0</span></div>
+        <div class="ctrl"><label>angolo γ</label><input type="range" id="cd-gg" min="15" max="90" step="1" value="50" oninput="smCorda()"><span class="v" id="cd-gg-val">50°</span></div>
+        <div><button class="btn" id="cd-anim" onclick="toggleAnim(this,{slider:'cd-gg',from:20,to:85,step:1,update:smCorda})">▶ Anima γ</button></div>
+      </div>
+      <div class="sim-fb" id="cd-fb"></div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-corda"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-corda"></div></div>
+</section>
+<!-- =================== TEOREMA DEI SENI =================== -->
+<section class="scene" id="seni">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>🔺 Il teorema dei seni</h2>
+      <p>In un triangolo qualsiasi ABC, ogni lato è proporzionale al seno dell'angolo opposto. Il rapporto comune è il <strong>diametro</strong> della circonferenza circoscritta:</p>
+      <div class="formula">a/sin α = b/sin β = c/sin γ = 2R</div>
+      <p>dove α, β, γ sono gli angoli opposti rispettivamente ai lati a, b, c e R è il raggio della circonferenza circoscritta.</p>
+      <div class="diagram"><canvas id="cv-seni-th"></canvas><p class="cap">Triangolo inscritto nella sua circonferenza circoscritta (raggio R): ciascun lato è una corda vista dall'angolo opposto.</p></div>
+    </div>
+
+    <div class="card">
+      <h2>Dalla corda al teorema dei seni</h2>
+      <p>Ogni lato del triangolo è una <strong>corda</strong> della circonferenza circoscritta, e l'angolo opposto è un <strong>angolo alla circonferenza</strong> che insiste su quella corda. Applicando il teorema della corda a ciascun lato:</p>
+      <div class="formula">a = 2R·sin α ;  b = 2R·sin β ;  c = 2R·sin γ</div>
+      <p>da cui, isolando 2R, segue subito la catena di uguaglianze del teorema dei seni.</p>
+      <div class="tip">📌 Quando usarlo: quando conosci un <strong>lato e l'angolo opposto</strong> (così trovi 2R) più un altro angolo o lato. Casi tipici: due angoli e un lato (ALA, AAL) o due lati e un angolo opposto (LLA).</div>
+    </div>
+
+    <div class="card">
+      <h2>Esempio</h2>
+      <div class="ex"><b>Es.</b> In un triangolo α = 45°, β = 60° e il lato a = 10 (opposto ad α). Trova b e l'angolo γ.<br>
+      γ = 180° − 45° − 60° = 75°.<br>
+      Dal teorema dei seni: b = a·sin β/sin α = 10·sin 60°/sin 45° = 10·(√3/2)/(√2/2) = 10·√3/√2 = 5√6 ≈ 12,25.<br>
+      Inoltre 2R = a/sin α = 10/sin 45° = 10/(√2/2) = 10√2 ≈ 14,14, quindi R ≈ 7,07.</div>
+      <div class="warn">⚠️ Nel caso «due lati e un angolo opposto» (LLA) il triangolo può non essere unico: a volte ci sono due soluzioni, una o nessuna.</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ Lati, angoli e circonferenza circoscritta</h2>
+      <p>Imposta due angoli e il lato a: il terzo angolo è determinato (α + β + γ = 180°) e gli altri lati seguono dal teorema dei seni. Osserva che a/sin α = 2R.</p>
+      <div class="diagram"><canvas id="cv-seni-sim"></canvas></div>
+      <div class="readout">
+        <span class="chip sin" id="se-a">a = 6,00</span>
+        <span class="chip cos" id="se-b">b = 5,20</span>
+        <span class="chip tan" id="se-c">c = 4,00</span>
+        <span class="chip r" id="se-R">2R = 8,49</span>
+      </div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>angolo α</label><input type="range" id="se-al" min="20" max="120" step="1" value="60" oninput="smSeni()"><span class="v" id="se-al-val">60°</span></div>
+        <div class="ctrl"><label>angolo β</label><input type="range" id="se-be" min="20" max="120" step="1" value="50" oninput="smSeni()"><span class="v" id="se-be-val">50°</span></div>
+        <div class="ctrl"><label>lato a</label><input type="range" id="se-aa" min="3" max="8" step="0.1" value="6" oninput="smSeni()"><span class="v" id="se-aa-val">6,0</span></div>
+      </div>
+      <div class="sim-fb" id="se-fb"></div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-seni"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-seni"></div></div>
+</section>
+<!-- =================== TEOREMA DI CARNOT =================== -->
+<section class="scene" id="carnot">
+  <div class="subnav">
+    <button class="subtab active" data-sub="teoria">📖 Teoria</button>
+    <button class="subtab" data-sub="sim">🎛️ Simulazioni</button>
+    <button class="subtab" data-sub="prova">✍️ Prova tu</button>
+    <button class="subtab" data-sub="quiz">🧩 Quiz</button>
+  </div>
+
+  <div class="subpanel active" data-sub="teoria">
+    <div class="card">
+      <h2>🧮 Il teorema di Carnot (del coseno)</h2>
+      <p>In un triangolo qualsiasi, il quadrato di un lato è uguale alla somma dei quadrati degli altri due, <strong>meno</strong> il doppio prodotto di questi per il coseno dell'angolo compreso:</p>
+      <div class="formula">a² = b² + c² − 2bc·cos α</div>
+      <div class="formula">b² = a² + c² − 2ac·cos β</div>
+      <div class="formula">c² = a² + b² − 2ab·cos γ</div>
+      <div class="diagram"><canvas id="cv-carnot-th"></canvas><p class="cap">Lati b e c con l'angolo compreso α: il terzo lato a si ottiene da a² = b² + c² − 2bc·cos α.</p></div>
+    </div>
+
+    <div class="card">
+      <h2>Il «Pitagora generalizzato»</h2>
+      <p>Se l'angolo compreso è retto (α = 90°), allora cos α = 0 e il termine correttivo sparisce:</p>
+      <div class="formula">α = 90°  ⟹  a² = b² + c²   (teorema di Pitagora)</div>
+      <p>Il termine −2bc·cos α «corregge» Pitagora: è <strong>negativo</strong> per angoli acuti (cos &gt; 0, il lato opposto è più corto) e <strong>positivo</strong> per angoli ottusi (cos &lt; 0, il lato opposto è più lungo).</p>
+    </div>
+
+    <div class="card">
+      <h2>Trovare gli angoli dai lati</h2>
+      <p>Invertendo la formula si ricava il coseno di un angolo conoscendo i tre lati (caso LLL):</p>
+      <div class="formula">cos α = (b² + c² − a²) / (2bc)</div>
+      <div class="tip">📌 Quando usarlo: due lati e l'angolo compreso (LAL) per trovare il terzo lato; tre lati (LLL) per trovare gli angoli. Negli altri casi conviene il teorema dei seni.</div>
+      <h3>Esempio</h3>
+      <div class="ex"><b>Es.</b> Dati b = 5, c = 8 e l'angolo compreso α = 60°, trova a.<br>
+      a² = 5² + 8² − 2·5·8·cos 60° = 25 + 64 − 80·(1/2) = 89 − 40 = 49 ⟹ a = 7.</div>
+      <div class="ex"><b>Es. (LLL)</b> Lati a = 7, b = 5, c = 8: cos α = (25 + 64 − 49)/(2·5·8) = 40/80 = 1/2 ⟹ α = 60°.</div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="sim">
+    <div class="card">
+      <h2>🎛️ Due lati, l'angolo compreso e il terzo lato</h2>
+      <p>Regola i lati b e c e l'angolo compreso α: il lato opposto a cambia secondo Carnot. Porta α a 90° per ritrovare Pitagora.</p>
+      <div class="diagram"><canvas id="cv-carnot-sim"></canvas></div>
+      <div class="readout">
+        <span class="chip cos" id="ca-b">b = 5,0</span>
+        <span class="chip tan" id="ca-c">c = 8,0</span>
+        <span class="chip sin" id="ca-al">α = 60°</span>
+        <span class="chip r" id="ca-a">a = 7,00</span>
+      </div>
+      <div class="sim-controls">
+        <div class="ctrl"><label>lato b</label><input type="range" id="ca-bb" min="2" max="9" step="0.1" value="5" oninput="smCarnot()"><span class="v" id="ca-bb-val">5,0</span></div>
+        <div class="ctrl"><label>lato c</label><input type="range" id="ca-cc" min="2" max="9" step="0.1" value="8" oninput="smCarnot()"><span class="v" id="ca-cc-val">8,0</span></div>
+        <div class="ctrl"><label>angolo α</label><input type="range" id="ca-aa" min="15" max="165" step="1" value="60" oninput="smCarnot()"><span class="v" id="ca-aa-val">60°</span></div>
+        <div><button class="btn" id="ca-anim" onclick="toggleAnim(this,{slider:'ca-aa',from:20,to:160,step:1,update:smCarnot})">▶ Anima α</button></div>
+      </div>
+      <div class="sim-fb" id="ca-fb"></div>
+    </div>
+  </div>
+
+  <div class="subpanel" data-sub="prova"><div id="pv-carnot"></div></div>
+  <div class="subpanel" data-sub="quiz"><div id="qz-carnot"></div></div>
+</section>
+</main>
+<script>
+/* ============ COSTANTI GRAFICHE ============ */
+const PRIMARY='#1565c0',PRIMARYD='#0d47a1',ACC='#ef6c00';
+const SINCOL='#2e7d32',COSCOL='#ef6c00',TANCOL='#7b1fa2',ROSE='#c2185b',TEAL='#00897b',PURP='#6a1b9a';
+const AXIS='#7a8aa6',GRIDC='#e6ecf6',CIRCC='#9fb4d6';
+const ANGFILL='rgba(21,101,192,.14)',ROSEFILL='rgba(194,24,91,.13)';
+
+/* ============ UTILITY ============ */
+function el(id){return document.getElementById(id);}
+function val(id){return parseFloat(el(id).value);}
+function chk(id){return el(id).checked;}
+function setv(id,t){const e=el(id);if(e)e.textContent=t;}
+function setHTML(id,h){const e=el(id);if(e)e.innerHTML=h;}
+function rad(d){return d*Math.PI/180;}
+function deg(r){return r*180/Math.PI;}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function nf(x,d){ if(d==null)d=2; if(!isFinite(x))return '—'; let r=x.toFixed(d); if(parseFloat(r)===0)r=(0).toFixed(d); return r.replace('.',','); }
+function fmt(v){ if(!isFinite(v))return '—'; let r=Math.round(v*1000)/1000; if(r===0)r=0; return (''+r).replace('.',','); }
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;}
+function fmtRad(d){ d=Math.round(d); let n=d,den=180; const g=gcd(n,den); n/=g;den/=g; if(n===0)return '0'; const core=(Math.abs(n)===1?'':Math.abs(n))+'π'+(den===1?'':'/'+den); return (n<0?'−':'')+core; }
+function fmtRadHalf(k){ if(k===0)return '0'; const sign=k<0?'−':''; const a=Math.abs(k); if(a%2===0){const m=a/2;return sign+(m===1?'π':m+'π');} return sign+(a===1?'π/2':a+'π/2'); }
+function piTicks(min,max){ const st=Math.PI/2,out=[]; for(let k=Math.ceil(min/st-1e-9);k<=Math.floor(max/st+1e-9);k++) out.push({v:k*st,label:fmtRadHalf(k)}); return out; }
+function intTicks(a,b){ const out=[]; for(let g=Math.ceil(a-1e-9);g<=b+1e-9;g++) out.push({v:g,label:''+g}); return out; }
+function norm2pi(x){ let v=x%(2*Math.PI); if(v<0)v+=2*Math.PI; return v; }
+function unit(v){ const m=Math.hypot(v[0],v[1])||1; return [v[0]/m,v[1]/m]; }
+
+/* ============ CARTESIAN PLOT (grafici sin/cos/tan) ============ */
+function makePlot(cv,cfg){
+  if(!cv)return; const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||320,H=cv.clientHeight||280; if(!W||!H)return;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  const xm=cfg.xmin,xM=cfg.xmax,ym=cfg.ymin,yM=cfg.ymax;
+  const px=x=>(x-xm)/(xM-xm)*W, py=y=>H-(y-ym)/(yM-ym)*H;
+  (cfg.shades||[]).forEach(s=>{ const x1=px(Math.max(s.from,xm)),x2=px(Math.min(s.to,xM)); if(x2>x1){ctx.fillStyle=s.color||ANGFILL;ctx.fillRect(x1,0,x2-x1,H);} });
+  ctx.font='11px sans-serif';
+  const xt=cfg.xticks||intTicks(xm,xM);
+  ctx.textAlign='center';ctx.textBaseline='top';
+  xt.forEach(t=>{ const X=px(t.v); ctx.strokeStyle=GRIDC;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X,0);ctx.lineTo(X,H);ctx.stroke(); if(t.label&&Math.abs(t.v)>1e-9){ctx.fillStyle=AXIS;ctx.fillText(t.label,X,py(0)+3);} });
+  const yt=cfg.yticks||intTicks(ym,yM);
+  ctx.textAlign='right';ctx.textBaseline='middle';
+  yt.forEach(t=>{ const Y=py(t.v); ctx.strokeStyle=GRIDC;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,Y);ctx.lineTo(W,Y);ctx.stroke(); if(t.label&&Math.abs(t.v)>1e-9){ctx.fillStyle=AXIS;ctx.fillText(t.label,px(0)-4,Y);} });
+  ctx.strokeStyle=AXIS;ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(px(0),0);ctx.lineTo(px(0),H);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,py(0));ctx.lineTo(W,py(0));ctx.stroke();
+  ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);ctx.clip();
+  const big=(yM-ym)*6;
+  (cfg.curves||[]).forEach(c=>{
+    ctx.strokeStyle=c.color||PRIMARY;ctx.lineWidth=c.width||2.4;ctx.setLineDash(c.dash||[]);
+    ctx.beginPath();let started=false;
+    for(let i=0;i<=W;i++){ const x=xm+(i/W)*(xM-xm); let y=c.fn(x); if(!isFinite(y)||Math.abs(y)>big){started=false;continue;} const X=px(x),Y=py(y); if(!started){ctx.moveTo(X,Y);started=true;}else ctx.lineTo(X,Y); }
+    ctx.stroke();ctx.setLineDash([]);
+  });
+  (cfg.hlines||[]).forEach(l=>{ ctx.strokeStyle=l.color||ACC;ctx.lineWidth=l.width||1.8;ctx.setLineDash(l.dash||[6,4]); const Y=py(l.y);ctx.beginPath();ctx.moveTo(0,Y);ctx.lineTo(W,Y);ctx.stroke();ctx.setLineDash([]); });
+  (cfg.vlines||[]).forEach(l=>{ ctx.strokeStyle=l.color||'#a9b8d0';ctx.lineWidth=l.width||1.4;ctx.setLineDash(l.dash||[4,3]); const X=px(l.x);ctx.beginPath();ctx.moveTo(X,0);ctx.lineTo(X,H);ctx.stroke();ctx.setLineDash([]); });
+  (cfg.points||[]).forEach(p=>{ const X=px(p.x),Y=py(p.y); ctx.fillStyle=p.color||ACC;ctx.beginPath();ctx.arc(X,Y,4.5,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke(); if(p.label){ctx.fillStyle=PRIMARYD;ctx.font='bold 11px sans-serif';ctx.textAlign=X>W-50?'right':'left';ctx.textBaseline='bottom';ctx.fillText(p.label,X+(X>W-50?-7:7),Y-6);} });
+  ctx.restore();
+}
+
+/* ============ CIRCONFERENZA GONIOMETRICA ============ */
+function drawCircle(cv,cfg){
+  if(!cv)return; const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||320,H=cv.clientHeight||300; if(!W||!H)return;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  const show=Object.assign({sin:true,cos:true,tan:false,radius:true},cfg.show||{});
+  const xmin=-1.45,xmax=1.95,ymin=-1.5,ymax=1.5;
+  const s=Math.min(W/(xmax-xmin),H/(ymax-ymin));
+  const offX=(W-(xmax-xmin)*s)/2,offY=(H-(ymax-ymin)*s)/2;
+  const px=x=>offX+(x-xmin)*s, py=y=>offY+(ymax-y)*s;
+  const L=(x1,y1,x2,y2,col,w,dash)=>{ctx.strokeStyle=col;ctx.lineWidth=w||1.5;ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(px(x1),py(y1));ctx.lineTo(px(x2),py(y2));ctx.stroke();ctx.setLineDash([]);};
+  ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);ctx.clip();
+  // assi
+  L(xmin,0,xmax,0,AXIS,1.4); L(0,ymin,0,ymax,AXIS,1.4);
+  ctx.fillStyle=AXIS;ctx.font='12px sans-serif';
+  ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText('x',px(xmax)-3,py(0)+3);
+  ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText('y',px(0)+4,py(ymax)+1);
+  ctx.font='11px sans-serif';ctx.fillStyle=AXIS;
+  ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('1',px(1),py(0)+4);ctx.fillText('−1',px(-1),py(0)+4);
+  ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('1',px(0)-5,py(1));ctx.fillText('−1',px(0)-5,py(-1));
+  // circonferenza
+  ctx.strokeStyle=CIRCC;ctx.lineWidth=2;ctx.beginPath();ctx.arc(px(0),py(0),s,0,7);ctx.stroke();
+  // asse tangenti
+  if(show.tan){ L(1,ymin,1,ymax,TANCOL,1,[4,3]); ctx.fillStyle=TANCOL;ctx.font='10px sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText('asse tan',px(1)+3,py(ymax)+1); }
+  // punti notevoli (marks)
+  (cfg.marks||[]).forEach(m=>{ const r=rad(m.deg),x=Math.cos(r),y=Math.sin(r); ctx.fillStyle=PRIMARY;ctx.beginPath();ctx.arc(px(x),py(y),3,0,7);ctx.fill(); if(m.label){ctx.fillStyle=PRIMARYD;ctx.font='9px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(m.label,px(x*1.2),py(y*1.2));} });
+
+  function drawOne(d,col,fillc,labelTxt,ar){
+    ar=ar||0.32; const r=rad(d),cx=Math.cos(r),cy=Math.sin(r);
+    const steps=Math.max(2,Math.round(Math.abs(d)/4));
+    // settore (fill)
+    ctx.fillStyle=fillc;ctx.beginPath();ctx.moveTo(px(0),py(0));
+    for(let i=0;i<=steps;i++){const t=rad(d*i/steps);ctx.lineTo(px(ar*Math.cos(t)),py(ar*Math.sin(t)));}
+    ctx.closePath();ctx.fill();
+    // arco
+    ctx.strokeStyle=col;ctx.lineWidth=1.4;ctx.beginPath();
+    for(let i=0;i<=steps;i++){const t=rad(d*i/steps);const X=px(ar*Math.cos(t)),Y=py(ar*Math.sin(t));if(i===0)ctx.moveTo(X,Y);else ctx.lineTo(X,Y);}ctx.stroke();
+    // tangente
+    if(show.tan && Math.abs(cx)>1e-3){ const t=cy/cx; L(0,0,1,t,TANCOL,1.3,[5,3]); L(1,0,1,t,TANCOL,4); const ty=clamp(t,ymin,ymax); ctx.fillStyle=TANCOL;ctx.beginPath();ctx.arc(px(1),py(ty),3.2,0,7);ctx.fill(); }
+    // coseno (orizzontale) e seno (verticale)
+    if(show.cos) L(0,0,cx,0,COSCOL,4);
+    if(show.sin) L(cx,0,cx,cy,SINCOL,4);
+    // raggio OP
+    if(show.radius) L(0,0,cx,cy,col,2.4);
+    // punto P
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(px(cx),py(cy),4.5,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+    if(labelTxt){ctx.fillStyle=col;ctx.font='bold 12px sans-serif';ctx.textAlign=cx<0?'right':'left';ctx.textBaseline='bottom';ctx.fillText(labelTxt,px(cx)+(cx<0?-7:7),py(cy)-6);}
+  }
+  if(!cfg.noMain){
+    if(cfg.deg2!=null) drawOne(cfg.deg2, cfg.col2||ROSE, ROSEFILL, cfg.label2||"P'", 0.47);
+    drawOne(cfg.deg, PRIMARY, ANGFILL, cfg.label1==null?'P':cfg.label1, 0.32);
+  }
+  ctx.restore();
+}
+
+/* ============ TRIANGOLO GENERICO ============ */
+function circum(p){
+  const ax=p[0][0],ay=p[0][1],bx=p[1][0],by=p[1][1],cx=p[2][0],cy=p[2][1];
+  const d=2*(ax*(by-cy)+bx*(cy-ay)+cx*(ay-by)); if(Math.abs(d)<1e-9)return null;
+  const ux=((ax*ax+ay*ay)*(by-cy)+(bx*bx+by*by)*(cy-ay)+(cx*cx+cy*cy)*(ay-by))/d;
+  const uy=((ax*ax+ay*ay)*(cx-bx)+(bx*bx+by*by)*(ax-cx)+(cx*cx+cy*cy)*(bx-ax))/d;
+  return {O:[ux,uy],R:Math.hypot(ax-ux,ay-uy)};
+}
+function arcBetween(ctx,cx,cy,d1,d2,rr,col,label){
+  let a1=Math.atan2(d1[1],d1[0]),a2=Math.atan2(d2[1],d2[0]); let d=a2-a1;
+  while(d<=-Math.PI)d+=2*Math.PI; while(d>Math.PI)d-=2*Math.PI;
+  ctx.strokeStyle=col;ctx.lineWidth=1.8;ctx.beginPath();
+  const n=Math.max(2,Math.round(Math.abs(d)/0.08));
+  for(let j=0;j<=n;j++){const t=a1+d*j/n;const X=cx+rr*Math.cos(t),Y=cy+rr*Math.sin(t);if(j===0)ctx.moveTo(X,Y);else ctx.lineTo(X,Y);}ctx.stroke();
+  if(label){const tm=a1+d/2;ctx.fillStyle=col;ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,cx+(rr+12)*Math.cos(tm),cy+(rr+12)*Math.sin(tm));}
+}
+function drawTri(cv,cfg){
+  if(!cv)return; const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||320,H=cv.clientHeight||300; if(!W||!H)return;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  const pts=cfg.pts; const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+  let minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys);
+  let cc=null;
+  if(cfg.circum){ cc=circum(pts); if(cc){minx=Math.min(minx,cc.O[0]-cc.R);maxx=Math.max(maxx,cc.O[0]+cc.R);miny=Math.min(miny,cc.O[1]-cc.R);maxy=Math.max(maxy,cc.O[1]+cc.R);} }
+  const bw=(maxx-minx)||1,bh=(maxy-miny)||1,pad=0.17;
+  minx-=bw*pad;maxx+=bw*pad;miny-=bh*pad;maxy+=bh*pad;
+  const s=Math.min(W/(maxx-minx),H/(maxy-miny));
+  const offX=(W-(maxx-minx)*s)/2,offY=(H-(maxy-miny)*s)/2;
+  const px=x=>offX+(x-minx)*s, py=y=>offY+(maxy-y)*s;
+  const P=pts.map(p=>[px(p[0]),py(p[1])]);
+  const cen=[(P[0][0]+P[1][0]+P[2][0])/3,(P[0][1]+P[1][1]+P[2][1])/3];
+  ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);ctx.clip();
+  if(cc){ ctx.strokeStyle=ROSE;ctx.lineWidth=1.6;ctx.setLineDash([5,4]);ctx.beginPath();ctx.arc(px(cc.O[0]),py(cc.O[1]),cc.R*s,0,7);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=ROSE;ctx.beginPath();ctx.arc(px(cc.O[0]),py(cc.O[1]),3,0,7);ctx.fill();
+    ctx.font='11px sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('O',px(cc.O[0])+6,py(cc.O[1])); }
+  // triangolo
+  ctx.beginPath();ctx.moveTo(P[0][0],P[0][1]);ctx.lineTo(P[1][0],P[1][1]);ctx.lineTo(P[2][0],P[2][1]);ctx.closePath();
+  ctx.fillStyle=cfg.fill||'rgba(21,101,192,.10)';ctx.fill();
+  ctx.strokeStyle=PRIMARY;ctx.lineWidth=2.4;ctx.stroke();
+  // angolo retto
+  if(cfg.right!=null){ const i=cfg.right,V=P[i],o=[0,1,2].filter(k=>k!==i);
+    const u1=unit([P[o[0]][0]-V[0],P[o[0]][1]-V[1]]),u2=unit([P[o[1]][0]-V[0],P[o[1]][1]-V[1]]),q=13;
+    const a=[V[0]+u1[0]*q,V[1]+u1[1]*q],b=[V[0]+u2[0]*q,V[1]+u2[1]*q],c=[a[0]+u2[0]*q,a[1]+u2[1]*q];
+    ctx.strokeStyle=PRIMARYD;ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(c[0],c[1]);ctx.lineTo(b[0],b[1]);ctx.stroke(); }
+  // archi angolari
+  (cfg.angles||[]).forEach(an=>{ const i=an.at,V=P[i],o=[0,1,2].filter(k=>k!==i);
+    if(cfg.right===i)return;
+    arcBetween(ctx,V[0],V[1],[P[o[0]][0]-V[0],P[o[0]][1]-V[1]],[P[o[1]][0]-V[0],P[o[1]][1]-V[1]],18,an.col||ACC,an.label); });
+  // altezze
+  (cfg.heights||[]).forEach(h=>{ const i=h.from,o=[0,1,2].filter(k=>k!==i),A=pts[i],B=pts[o[0]],C=pts[o[1]];
+    const bx=C[0]-B[0],by=C[1]-B[1],t=((A[0]-B[0])*bx+(A[1]-B[1])*by)/(bx*bx+by*by),F=[B[0]+t*bx,B[1]+t*by];
+    ctx.strokeStyle=PRIMARYD;ctx.lineWidth=1.3;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(px(A[0]),py(A[1]));ctx.lineTo(px(F[0]),py(F[1]));ctx.stroke();ctx.setLineDash([]); });
+  // vertici + etichette
+  const vl=cfg.vlabels||['A','B','C'];
+  P.forEach((V,i)=>{ ctx.fillStyle=PRIMARYD;ctx.beginPath();ctx.arc(V[0],V[1],3.5,0,7);ctx.fill();
+    const dir=unit([V[0]-cen[0],V[1]-cen[1]]); ctx.fillStyle=PRIMARYD;ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(vl[i],V[0]+dir[0]*16,V[1]+dir[1]*16); });
+  // lati
+  if(cfg.slabels){ [0,1,2].forEach(i=>{ const o=[0,1,2].filter(k=>k!==i),M=[(P[o[0]][0]+P[o[1]][0])/2,(P[o[0]][1]+P[o[1]][1])/2];
+    const dir=unit([M[0]-cen[0],M[1]-cen[1]]); ctx.fillStyle='#33414f';ctx.font='italic 12px Georgia,serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(cfg.slabels[i],M[0]+dir[0]*14,M[1]+dir[1]*14); }); }
+  ctx.restore();
+}
+
+/* ============ CORDA E ANGOLO ALLA CIRCONFERENZA ============ */
+function drawChord(cv,cfg){
+  if(!cv)return; const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||320,H=cv.clientHeight||300; if(!W||!H)return;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  const m=1.3,s=Math.min(W,H)/(2*m),ox=W/2,oy=H/2;
+  const px=x=>ox+x*s, py=y=>oy-y*s, pt=d=>{const r=rad(d);return [Math.cos(r),Math.sin(r)];};
+  const A=pt(cfg.aDeg),B=pt(cfg.bDeg),C=pt(cfg.cDeg);
+  ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);ctx.clip();
+  ctx.strokeStyle=CIRCC;ctx.lineWidth=2;ctx.beginPath();ctx.arc(ox,oy,s,0,7);ctx.stroke();
+  if(cfg.showCenter){
+    ctx.strokeStyle='#b7c4dc';ctx.lineWidth=1.4;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(px(A[0]),py(A[1]));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(px(B[0]),py(B[1]));ctx.stroke();ctx.setLineDash([]);
+    arcBetween(ctx,ox,oy,[px(A[0])-ox,py(A[1])-oy],[px(B[0])-ox,py(B[1])-oy],26,PRIMARY,'2γ');
+    ctx.fillStyle=PRIMARYD;ctx.beginPath();ctx.arc(ox,oy,3,0,7);ctx.fill();
+    ctx.font='11px sans-serif';ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText('O',ox-5,oy+4);
+  }
+  ctx.strokeStyle=PRIMARY;ctx.lineWidth=2.2;
+  ctx.beginPath();ctx.moveTo(px(C[0]),py(C[1]));ctx.lineTo(px(A[0]),py(A[1]));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px(C[0]),py(C[1]));ctx.lineTo(px(B[0]),py(B[1]));ctx.stroke();
+  ctx.strokeStyle=ACC;ctx.lineWidth=3.4;ctx.beginPath();ctx.moveTo(px(A[0]),py(A[1]));ctx.lineTo(px(B[0]),py(B[1]));ctx.stroke();
+  arcBetween(ctx,px(C[0]),py(C[1]),[px(A[0])-px(C[0]),py(A[1])-py(C[1])],[px(B[0])-px(C[0]),py(B[1])-py(C[1])],22,PURP,cfg.labelG||'γ');
+  const dot=(Q,lab)=>{ctx.fillStyle=PRIMARYD;ctx.beginPath();ctx.arc(px(Q[0]),py(Q[1]),4,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.4;ctx.stroke();ctx.fillStyle=PRIMARYD;ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lab,px(Q[0]*1.16),py(Q[1]*1.16));};
+  dot(A,'A');dot(B,'B');dot(C,'C');
+  // etichetta corda
+  ctx.fillStyle=ACC;ctx.font='italic 12px Georgia,serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('corda', px((A[0]+B[0])/2), py((A[1]+B[1])/2)-(C[1]>0?-14:14));
+  ctx.restore();
+}
+
+/* ============ VALORI ESATTI ARCHI NOTEVOLI ============ */
+const EXACT={
+ 0:['0','1','0'],30:['1/2','√3/2','√3/3'],45:['√2/2','√2/2','1'],60:['√3/2','1/2','√3'],90:['1','0','∄'],
+ 120:['√3/2','−1/2','−√3'],135:['√2/2','−√2/2','−1'],150:['1/2','−√3/2','−√3/3'],180:['0','−1','0'],
+ 210:['−1/2','−√3/2','√3/3'],225:['−√2/2','−√2/2','1'],240:['−√3/2','−1/2','√3'],270:['−1','0','∄'],
+ 300:['−√3/2','1/2','−√3'],315:['−√2/2','√2/2','−1'],330:['−1/2','√3/2','−√3/3'],360:['0','1','0']
+};
+
+/* ============ SIMULAZIONI ============ */
+function smGonio(){
+  const a=val('go-a'); setv('go-a-val',a+'°');
+  const r=rad(a),si=Math.sin(r),co=Math.cos(r);
+  drawCircle(el('cv-gonio-sim'),{deg:a,show:{sin:chk('go-csin'),cos:chk('go-ccos'),tan:chk('go-ctan'),radius:true}});
+  setv('go-ang','α = '+a+'°');
+  setv('go-sin','sin = '+nf(si,3)); setv('go-cos','cos = '+nf(co,3));
+  setv('go-tan', Math.abs(co)<1e-9?'tan = ∄':'tan = '+nf(si/co,3));
+  setHTML('go-fb',`Per α = <b>${a}°</b> (= ${fmtRad(a)} rad): P = (cos α, sin α) = (<b>${nf(co,3)}</b>, <b>${nf(si,3)}</b>). ${Math.abs(co)<1e-9?'Qui cos α = 0: la <b>tangente non esiste</b>.':'tan α = sin α/cos α = <b>'+nf(si/co,3)+'</b>.'}`);
+}
+function smNoti(){
+  const a=parseInt(el('nt-sel').value),e=EXACT[a]||['—','—','—'];
+  drawCircle(el('cv-noti-sim'),{deg:a,show:{sin:true,cos:true,tan:false,radius:true}});
+  setv('nt-sin','sin = '+e[0]); setv('nt-cos','cos = '+e[1]); setv('nt-tan','tan = '+e[2]);
+  setHTML('nt-fb',`Angolo <b>${a}°</b> = ${fmtRad(a)} rad: &nbsp; sin = <b>${e[0]}</b>, &nbsp; cos = <b>${e[1]}</b>, &nbsp; tan = <b>${e[2]}</b>.`);
+}
+function smAssoc(){
+  const a=val('as-a'); setv('as-a-val',a+'°'); const ty=el('as-type').value;
+  let d2,rel,rels,relc,relt;
+  if(ty==='opp'){d2=-a;rel='Opposto −α';rels='sin(−α)=−sin α';relc='cos(−α)=cos α';relt='tan(−α)=−tan α';}
+  else if(ty==='sup'){d2=180-a;rel='Supplementare π−α';rels='sin(π−α)=sin α';relc='cos(π−α)=−cos α';relt='tan(π−α)=−tan α';}
+  else if(ty==='pi'){d2=180+a;rel='π+α';rels='sin(π+α)=−sin α';relc='cos(π+α)=−cos α';relt='tan(π+α)=tan α';}
+  else if(ty==='esp'){d2=360-a;rel='Esplementare 2π−α';rels='sin(2π−α)=−sin α';relc='cos(2π−α)=cos α';relt='tan(2π−α)=−tan α';}
+  else if(ty==='comp'){d2=90-a;rel='Complementare π/2−α';rels='sin(π/2−α)=cos α';relc='cos(π/2−α)=sin α';relt='tan(π/2−α)=cot α';}
+  else {d2=90+a;rel='π/2+α';rels='sin(π/2+α)=cos α';relc='cos(π/2+α)=−sin α';relt='tan(π/2+α)=−cot α';}
+  drawCircle(el('cv-assoc-sim'),{deg:a,deg2:d2,show:{sin:false,cos:false,tan:false,radius:true},label1:'α',label2:'assoc'});
+  const d2n=((Math.round(d2)%360)+360)%360;
+  setHTML('as-fb',`<b>${rel}</b> &nbsp;(α = ${a}°, &nbsp; associato = ${d2n}°)<br>${rels} &nbsp;|&nbsp; ${relc} &nbsp;|&nbsp; ${relt}`);
+}
+function smRel(){
+  const a=val('rl-a'); setv('rl-a-val',a+'°'); const r=rad(a),si=Math.sin(r),co=Math.cos(r),sum=si*si+co*co;
+  drawCircle(el('cv-rel-sim'),{deg:a,show:{sin:true,cos:true,tan:false,radius:true}});
+  setv('rl-sin','sin = '+nf(si,3)); setv('rl-cos','cos = '+nf(co,3)); setv('rl-sum','sin² + cos² = '+nf(sum,3));
+  setHTML('rl-fb',`sin²α + cos²α = (${nf(si,3)})² + (${nf(co,3)})² = ${nf(si*si,3)} + ${nf(co*co,3)} = <b>${nf(sum,3)}</b> = 1, per ogni α.`);
+}
+function smEq(){
+  const f=el('eq-f').value,m=val('eq-m'); setv('eq-m-val',nf(m,2)); const TWO=2*Math.PI;
+  let fn,sols=[],note='';
+  if(f==='sin')fn=Math.sin; else if(f==='cos')fn=Math.cos; else fn=Math.tan;
+  if(f==='sin'){ if(m<-1||m>1)note='|m| > 1: nessuna soluzione'; else {const x=Math.asin(m);sols=[norm2pi(x),norm2pi(Math.PI-x)];} }
+  else if(f==='cos'){ if(m<-1||m>1)note='|m| > 1: nessuna soluzione'; else {const x=Math.acos(m);sols=[norm2pi(x),norm2pi(TWO-x)];} }
+  else { const x=Math.atan(m); sols=[norm2pi(x),norm2pi(x+Math.PI)]; }
+  sols=Array.from(new Set(sols.map(x=>Math.round(x*1e5)/1e5))).filter(x=>x<TWO-1e-6).sort((p,q)=>p-q);
+  const yr=f==='tan'?3:1.6;
+  makePlot(el('cv-eq-sim'),{xmin:-0.35,xmax:TWO+0.35,ymin:-yr,ymax:yr,xticks:piTicks(0,TWO),
+    curves:[{fn,color:f==='cos'?ACC:(f==='tan'?TANCOL:SINCOL),width:2.6}],
+    hlines:[{y:m,color:PRIMARY}], vlines:sols.map(x=>({x})),
+    points:sols.map(x=>({x,y:m,label:Math.round(deg(x))+'°'}))});
+  setHTML('eq-fb', note ? `${f} x = ${nf(m,2)}: <b>${note}</b>.`
+    : `${f} x = ${nf(m,2)} in [0, 2π): ${sols.length} soluzioni, x ≈ ${sols.map(x=>nf(x,3)).join(' ; ')} rad &nbsp;(${sols.map(x=>Math.round(deg(x))+'°').join(' ; ')}).`);
+}
+function smRett(){
+  const c=val('re-cc'),al=val('re-aa'); setv('re-cc-val',nf(c,1)); setv('re-aa-val',al+'°');
+  const r=rad(al),a=c*Math.sin(r),b=c*Math.cos(r),be=90-al;
+  drawTri(el('cv-rett-sim'),{pts:[[0,b],[a,0],[0,0]],vlabels:['A','B','C'],right:2,
+    angles:[{at:0,label:'α',col:ACC},{at:1,label:'β',col:TEAL}],slabels:['a','b','c']});
+  setv('re-c','c = '+nf(c,1)); setv('re-a','a = '+nf(a,2)); setv('re-b','b = '+nf(b,2)); setv('re-beta','β = '+be+'°');
+  setHTML('re-fb',`Con c = ${nf(c,1)} e α = ${al}°: &nbsp; a = c·sin α = ${nf(c,1)}·${nf(Math.sin(r),3)} = <b>${nf(a,2)}</b> ; &nbsp; b = c·cos α = <b>${nf(b,2)}</b> ; &nbsp; β = 90° − α = <b>${be}°</b>.`);
+}
+function smCorda(){
+  const R=val('cd-RR'),g=val('cd-gg'); setv('cd-RR-val',nf(R,1)); setv('cd-gg-val',g+'°');
+  drawChord(el('cv-corda-sim'),{aDeg:90+g,bDeg:90-g,cDeg:270,showCenter:true});
+  const AB=2*R*Math.sin(rad(g));
+  setv('cd-R','R = '+nf(R,1)); setv('cd-g','γ = '+g+'°'); setv('cd-ab','AB = '+nf(AB,2)); setv('cd-cen','centro 2γ = '+(2*g)+'°');
+  setHTML('cd-fb',`AB = 2R·sin γ = 2·${nf(R,1)}·sin ${g}° = <b>${nf(AB,2)}</b>. &nbsp; L'angolo al centro è 2γ = <b>${2*g}°</b>, il doppio di quello alla circonferenza.`);
+}
+function smSeni(){
+  let al=val('se-al'),be=val('se-be'); const a=val('se-aa');
+  if(al+be>160){ be=160-al; el('se-be').value=be; }
+  setv('se-al-val',Math.round(al)+'°'); setv('se-be-val',Math.round(be)+'°'); setv('se-aa-val',nf(a,1));
+  const ga=180-al-be,A=rad(al),B=rad(be),G=rad(ga),twoR=a/Math.sin(A),b=twoR*Math.sin(B),c=twoR*Math.sin(G);
+  drawTri(el('cv-seni-sim'),{pts:[[0,0],[c,0],[b*Math.cos(A),b*Math.sin(A)]],vlabels:['A','B','C'],
+    angles:[{at:0,label:'α',col:ACC},{at:1,label:'β',col:TEAL},{at:2,label:'γ',col:PURP}],slabels:['a','b','c'],circum:true});
+  setv('se-a','a = '+nf(a,2)); setv('se-b','b = '+nf(b,2)); setv('se-c','c = '+nf(c,2)); setv('se-R','2R = '+nf(twoR,2));
+  setHTML('se-fb',`α=${Math.round(al)}°, β=${Math.round(be)}°, γ=${Math.round(ga)}°. &nbsp; 2R = a/sin α = ${nf(a,1)}/${nf(Math.sin(A),3)} = <b>${nf(twoR,2)}</b>; &nbsp; b = 2R·sin β = <b>${nf(b,2)}</b>, &nbsp; c = 2R·sin γ = <b>${nf(c,2)}</b>.`);
+}
+function smCarnot(){
+  const b=val('ca-bb'),c=val('ca-cc'),al=val('ca-aa'); setv('ca-bb-val',nf(b,1)); setv('ca-cc-val',nf(c,1)); setv('ca-aa-val',al+'°');
+  const A=rad(al),a=Math.sqrt(b*b+c*c-2*b*c*Math.cos(A));
+  drawTri(el('cv-carnot-sim'),{pts:[[0,0],[c,0],[b*Math.cos(A),b*Math.sin(A)]],vlabels:['A','B','C'],
+    angles:[{at:0,label:'α',col:ACC}],slabels:['a','b','c'],right:Math.abs(al-90)<0.5?0:null});
+  setv('ca-b','b = '+nf(b,1)); setv('ca-c','c = '+nf(c,1)); setv('ca-al','α = '+al+'°'); setv('ca-a','a = '+nf(a,2));
+  const corr=2*b*c*Math.cos(A);
+  setHTML('ca-fb',`a² = b² + c² − 2bc·cos α = ${nf(b*b,1)} + ${nf(c*c,1)} − ${nf(corr,2)} = <b>${nf(a*a,2)}</b> &nbsp;⟹&nbsp; a = <b>${nf(a,2)}</b>. ${al==90?'(α = 90°: termine nullo, ritrovi Pitagora a² = b² + c².)':(al<90?'(α acuto: −2bc·cos α &lt; 0.)':'(α ottuso: −2bc·cos α &gt; 0, a più lungo.)')}`);
+}
+
+/* ============ DIAGRAMMI STATICI (Teoria) ============ */
+function rdGonio(){
+  drawCircle(el('cv-gonio-circle'),{deg:40,show:{sin:true,cos:true,tan:true,radius:true}});
+  makePlot(el('cv-gonio-graph'),{xmin:-2*Math.PI-0.3,xmax:2*Math.PI+0.3,ymin:-1.5,ymax:1.5,xticks:piTicks(-2*Math.PI,2*Math.PI),
+    curves:[{fn:Math.sin,color:SINCOL,width:2.4},{fn:Math.cos,color:ACC,width:2.4}]});
+}
+function rdNoti(){
+  drawTri(el('cv-noti-tri'),{pts:[[0,Math.sqrt(3)/2],[0.5,0],[0,0]],vlabels:['A','B','C'],right:2,
+    angles:[{at:0,label:'30°',col:ACC},{at:1,label:'60°',col:TEAL}],slabels:['½','√3/2','1']});
+  drawCircle(el('cv-noti-circle'),{noMain:true,marks:[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330].map(d=>({deg:d,label:d+'°'}))});
+}
+function rdAssoc(){ drawCircle(el('cv-assoc-circle'),{deg:55,deg2:125,show:{sin:false,cos:false,tan:false,radius:true},label1:'α',label2:'π−α'}); }
+function rdRel(){ drawCircle(el('cv-rel-circle'),{deg:35,show:{sin:true,cos:true,tan:false,radius:true}}); }
+function rdEq(){ makePlot(el('cv-eq-th'),{xmin:-0.3,xmax:2*Math.PI+0.3,ymin:-1.5,ymax:1.5,xticks:piTicks(0,2*Math.PI),
+    curves:[{fn:Math.sin,color:SINCOL,width:2.6}],hlines:[{y:0.5,color:PRIMARY}],
+    points:[{x:Math.PI/6,y:0.5,label:'30°'},{x:5*Math.PI/6,y:0.5,label:'150°'}],vlines:[{x:Math.PI/6},{x:5*Math.PI/6}]}); }
+function rdRett(){ drawTri(el('cv-rett-th'),{pts:[[0,4],[3,0],[0,0]],vlabels:['A','B','C'],right:2,
+    angles:[{at:0,label:'α',col:ACC},{at:1,label:'β',col:TEAL}],slabels:['a','b','c']}); }
+function rdCorda(){ drawChord(el('cv-corda-th'),{aDeg:140,bDeg:40,cDeg:270,showCenter:true}); }
+function rdSeni(){ const al=60,be=50,ga=70,a=6,A=rad(al),B=rad(be),twoR=a/Math.sin(A),b=twoR*Math.sin(B);
+  drawTri(el('cv-seni-th'),{pts:[[0,0],[twoR*Math.sin(rad(ga)),0],[b*Math.cos(A),b*Math.sin(A)]],vlabels:['A','B','C'],
+    angles:[{at:0,label:'α',col:ACC},{at:1,label:'β',col:TEAL},{at:2,label:'γ',col:PURP}],slabels:['a','b','c'],circum:true}); }
+function rdCarnot(){ const b=5,c=8,A=rad(60); drawTri(el('cv-carnot-th'),{pts:[[0,0],[c,0],[b*Math.cos(A),b*Math.sin(A)]],vlabels:['A','B','C'],
+    angles:[{at:0,label:'α',col:ACC}],slabels:['a','b','c']}); }
+
+const RENDERERS={
+  gonio:{teoria:rdGonio,sim:smGonio}, noti:{teoria:rdNoti,sim:smNoti}, assoc:{teoria:rdAssoc,sim:smAssoc},
+  rel:{teoria:rdRel,sim:smRel}, eqgon:{teoria:rdEq,sim:smEq}, rett:{teoria:rdRett,sim:smRett},
+  corda:{teoria:rdCorda,sim:smCorda}, seni:{teoria:rdSeni,sim:smSeni}, carnot:{teoria:rdCarnot,sim:smCarnot}
+};
+
+/* ============ ANIMAZIONE ============ */
+let animRAF=null,animState=null;
+function toggleAnim(btn,cfg){ if(animState&&animState.btn===btn){stopAnim();return;} stopAnim();
+  animState=Object.assign({btn,dir:1,origLabel:btn.textContent},cfg); btn.textContent='⏸ Pausa'; loopAnim(); }
+function loopAnim(){ if(!animState)return; const s=el(animState.slider); let v=parseFloat(s.value)+animState.dir*animState.step;
+  if(animState.wrap){ if(v>animState.to)v=animState.from; else if(v<animState.from)v=animState.to; }
+  else { if(v>=animState.to){v=animState.to;animState.dir=-1;} else if(v<=animState.from){v=animState.from;animState.dir=1;} }
+  s.value=v; animState.update(); animRAF=requestAnimationFrame(loopAnim); }
+function stopAnim(){ if(animRAF)cancelAnimationFrame(animRAF); animRAF=null; if(animState){animState.btn.textContent=animState.origLabel;animState=null;} }
+
+/* ============ NAVIGAZIONE ============ */
+const tabs=document.querySelectorAll('nav.main button');
+const scenes=document.querySelectorAll('section.scene');
+const SECS=['gonio','noti','assoc','rel','eqgon','rett','corda','seni','carnot'];
+const activeSub={}; SECS.forEach(s=>activeSub[s]='teoria');
+function renderFor(sec,sub){ const r=RENDERERS[sec]&&RENDERERS[sec][sub]; if(r)r(); }
+function show(id){ stopAnim();
+  tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+  scenes.forEach(s=>s.classList.toggle('active',s.id===id));
+  window.scrollTo({top:0,behavior:'instant'}); renderFor(id,activeSub[id]||'teoria'); }
+function showSub(sec,sub){ stopAnim(); const scene=el(sec);
+  scene.querySelectorAll('.subtab').forEach(b=>b.classList.toggle('active',b.dataset.sub===sub));
+  scene.querySelectorAll('.subpanel').forEach(p=>p.classList.toggle('active',p.dataset.sub===sub));
+  activeSub[sec]=sub; renderFor(sec,sub); }
+tabs.forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
+document.querySelectorAll('.home-card').forEach(c=>c.addEventListener('click',()=>show(c.dataset.go)));
+document.querySelectorAll('.subtab').forEach(b=>b.addEventListener('click',()=>showSub(b.closest('.scene').id,b.dataset.sub)));
+const _hdr=document.querySelector('header'),_nav=document.querySelector('nav.main');
+function _navTop(){ _nav.style.top=_hdr.offsetHeight+'px'; }
+_navTop(); window.addEventListener('resize',_navTop);
+let _rz=null;
+window.addEventListener('resize',()=>{ clearTimeout(_rz); _rz=setTimeout(()=>{ const cur=[...scenes].find(s=>s.classList.contains('active')); if(cur&&cur.id!=='home')renderFor(cur.id,activeSub[cur.id]||'teoria'); },180); });
+
+/* ============ PROVA TU ============ */
+const PV={
+gonio:[
+  {q:'Converti π/3 radianti in gradi.',hints:['Usa gradi = rad·180/π','(π/3)·180/π = 180/3'],steps:['gradi = (π/3)·180/π','= 180/3','= 60°'],ans:60},
+  {q:'Converti 225° in radianti nella forma (k/4)·π: quanto vale k?',hints:['rad = gradi·π/180','225/180 si semplifica'],steps:['225·π/180 = (225/180)π','225/180 = 5/4','⟹ (5/4)π, quindi k = 5'],ans:5},
+  {q:'In quale quadrante cade l\'angolo di 200°? (scrivi 1, 2, 3 o 4)',hints:['180° &lt; 200° &lt; 270°'],steps:['200° è compreso fra 180° e 270°','è il 3º quadrante'],ans:3},
+  {q:'Calcola sin 270° + cos 180°.',hints:['sin 270° = −1','cos 180° = −1'],steps:['sin 270° = −1','cos 180° = −1','somma = −2'],ans:-2}
+],
+noti:[
+  {q:'Quanto vale 2·sin 30° + cos 60°?',hints:['sin 30° = 1/2','cos 60° = 1/2'],steps:['2·(1/2) + 1/2','= 1 + 0,5','= 1,5'],ans:1.5,tol:0.001},
+  {q:'Calcola tan 45° + tan 0°.',hints:['tan 45° = 1','tan 0° = 0'],steps:['1 + 0','= 1'],ans:1},
+  {q:'Quanto vale sin²60° (cioè (sin 60°)²)?',hints:['sin 60° = √3/2','(√3/2)² = 3/4'],steps:['(√3/2)² = 3/4','= 0,75'],ans:0.75,tol:0.001},
+  {q:'Calcola cos 0° + cos 90° + cos 180°.',hints:['1 + 0 + (−1)'],steps:['cos0 + cos90 + cos180 = 1 + 0 − 1','= 0'],ans:0}
+],
+assoc:[
+  {q:'Sapendo che sin 50° ≈ 0,766, quanto vale sin 130°? (3 decimali)',hints:['130° = 180° − 50° (supplementari)','sin(π − α) = sin α'],steps:['sin 130° = sin(180° − 50°)','= sin 50° ≈ 0,766'],ans:0.766,tol:0.005},
+  {q:'Se cos 40° ≈ 0,766, quanto vale cos 140°? (3 decimali)',hints:['140° = 180° − 40°','cos(π − α) = −cos α'],steps:['cos 140° = −cos 40°','≈ −0,766'],ans:-0.766,tol:0.005},
+  {q:'cos 300° è uguale al coseno di quale angolo acuto? (in gradi)',hints:['300° = 360° − 60°','cos(2π − α) = cos α'],steps:['cos 300° = cos(360° − 60°)','= cos 60°','angolo = 60°'],ans:60},
+  {q:'sin 210° è uguale a −sin di quale angolo acuto? (in gradi)',hints:['210° = 180° + 30°','sin(π + α) = −sin α'],steps:['sin 210° = sin(180° + 30°)','= −sin 30°','angolo = 30°'],ans:30}
+],
+rel:[
+  {q:'Se sin α = 3/5 e α è nel 1º quadrante, quanto vale cos α? (decimale)',hints:['cos α = √(1 − sin²α)','√(1 − 9/25) = √(16/25)'],steps:['cos α = √(1 − 9/25)','= √(16/25) = 4/5','= 0,8'],ans:0.8,tol:0.001},
+  {q:'Con sin α = 3/5 e cos α = 4/5, quanto vale tan α?',hints:['tan α = sin α/cos α','(3/5)/(4/5)'],steps:['tan α = (3/5)/(4/5)','= 3/4 = 0,75'],ans:0.75,tol:0.001},
+  {q:'Se cos α = 0,6 (α nel 1º quadrante), quanto vale sin α?',hints:['sin α = √(1 − cos²α)','√(1 − 0,36) = √0,64'],steps:['sin α = √(1 − 0,36)','= √0,64 = 0,8'],ans:0.8,tol:0.001},
+  {q:'Quanto vale sin²25° + cos²25°?',hints:['Prima relazione fondamentale'],steps:['sin²α + cos²α = 1 per ogni α'],ans:1}
+],
+eqgon:[
+  {q:'Risolvi sin x = 1/2 in [0°, 360°): la soluzione minore (in gradi).',hints:['arcsin(1/2) = 30°','l\'altra è 180° − 30° = 150°'],steps:['x = 30° oppure x = 150°','la minore è 30°'],ans:30},
+  {q:'Risolvi cos x = 0 in [0°, 360°): la soluzione minore (in gradi).',hints:['cos x = 0 a 90° e 270°'],steps:['x = 90° oppure x = 270°','la minore è 90°'],ans:90},
+  {q:'Risolvi 2·sin x − 1 = 0 in [0°, 360°): la soluzione minore (in gradi).',hints:['2 sin x = 1 ⟹ sin x = 1/2'],steps:['sin x = 1/2','x = 30° oppure 150°','minore: 30°'],ans:30},
+  {q:'Equazione omogenea tan²x − 1 = 0 ⟹ tan x = ±1. La soluzione positiva minore in [0°,360°) (gradi).',hints:['tan x = 1 ⟹ 45°','tan x = −1 ⟹ 135°'],steps:['tan x = 1 ⟹ x = 45°','la minima positiva è 45°'],ans:45}
+],
+rett:[
+  {q:'Triangolo rettangolo: c = 10, α = 30°. Quanto vale il cateto a opposto ad α?',hints:['a = c·sin α','10·sin 30° = 10·0,5'],steps:['a = c·sin α = 10·sin 30°','= 10·0,5 = 5'],ans:5},
+  {q:'Con c = 10 e α = 30°, quanto vale il cateto b? (2 decimali)',hints:['b = c·cos α','cos 30° = √3/2 ≈ 0,866'],steps:['b = 10·cos 30°','= 10·0,866 ≈ 8,66'],ans:8.66,tol:0.05},
+  {q:'I cateti misurano a = 3 e b = 4. Quanto vale l\'ipotenusa c?',hints:['Pitagora: c = √(a² + b²)'],steps:['c = √(9 + 16)','= √25 = 5'],ans:5},
+  {q:'Cateto opposto ad α: a = 5, ipotenusa c = 10. Quanto vale sin α?',hints:['sin α = cateto opposto / ipotenusa'],steps:['sin α = a/c = 5/10','= 0,5'],ans:0.5,tol:0.001}
+],
+corda:[
+  {q:'Corda AB = 12 vista sotto un angolo alla circonferenza γ = 30°. Quanto vale il raggio R?',hints:['AB = 2R·sin γ','12 = 2R·sin 30° = 2R·0,5 = R'],steps:['12 = 2R·sin 30°','12 = 2R·0,5 = R','R = 12'],ans:12},
+  {q:'In una circonferenza di raggio R = 5, quanto vale la corda vista sotto γ = 90°?',hints:['AB = 2R·sin 90° = 2R·1','è il diametro'],steps:['AB = 2·5·sin 90°','= 10·1 = 10'],ans:10},
+  {q:'R = 10, γ = 30°. Quanto vale la corda AB?',hints:['AB = 2R·sin γ'],steps:['AB = 2·10·sin 30°','= 20·0,5 = 10'],ans:10},
+  {q:'Una corda uguale al raggio (AB = R) è vista sotto un angolo alla circonferenza di quanti gradi? (acuto)',hints:['R = 2R·sin γ ⟹ sin γ = 1/2'],steps:['R = 2R·sin γ','sin γ = 1/2','γ = 30°'],ans:30}
+],
+seni:[
+  {q:'α = 30°, lato opposto a = 5. Quanto vale 2R?',hints:['2R = a/sin α','5/sin 30° = 5/0,5'],steps:['2R = a/sin α = 5/sin 30°','= 5/0,5 = 10'],ans:10},
+  {q:'2R = 10 e β = 30°. Quanto vale il lato b opposto a β?',hints:['b = 2R·sin β','10·sin 30°'],steps:['b = 2R·sin β = 10·sin 30°','= 10·0,5 = 5'],ans:5},
+  {q:'a = 8 con α = 90°. Quanto vale 2R = a/sin α?',hints:['sin 90° = 1'],steps:['2R = 8/sin 90°','= 8/1 = 8'],ans:8},
+  {q:'In un triangolo a = 6, sin α = 0,5 e sin β = 0,75. Quanto vale b?',hints:['b = a·sin β/sin α','6·0,75/0,5'],steps:['b = 6·0,75/0,5','= 4,5/0,5 = 9'],ans:9,tol:0.05}
+],
+carnot:[
+  {q:'b = 5, c = 8, α = 60°. Quanto vale a? (a² = b² + c² − 2bc·cos α)',hints:['a² = 25 + 64 − 80·cos 60°','cos 60° = 0,5'],steps:['a² = 25 + 64 − 80·0,5','= 89 − 40 = 49','a = 7'],ans:7},
+  {q:'b = 3, c = 4, α = 90°. Quanto vale a?',hints:['cos 90° = 0: resta Pitagora'],steps:['a² = 9 + 16 − 0','= 25','a = 5'],ans:5},
+  {q:'Lati a = 7, b = 5, c = 8: quanto vale cos α? (formula inversa, decimale)',hints:['cos α = (b² + c² − a²)/(2bc)','(25 + 64 − 49)/80'],steps:['cos α = (25 + 64 − 49)/(2·5·8)','= 40/80 = 0,5'],ans:0.5,tol:0.001},
+  {q:'b = 2, c = 2, α = 60°. Quanto vale a²?',hints:['a² = 4 + 4 − 8·cos 60°','cos 60° = 0,5'],steps:['a² = 8 − 8·0,5','= 8 − 4 = 4'],ans:4}
+]
+};
+const pvState={}; Object.keys(PV).forEach(s=>pvState[s]={i:0,hint:0});
+function renderProva(s){
+  const e=el('pv-'+s); if(!e)return; const ex=PV[s][pvState[s].i];
+  e.innerHTML=`<div class="card"><h2>✍️ Prova tu</h2>
+    <div class="pv-q">Esercizio ${pvState[s].i+1} / ${PV[s].length}. &nbsp;${ex.q}</div>
+    <div class="pv-controls">
+      <input class="pv-input" id="pv-in-${s}" inputmode="text" placeholder="La tua risposta…" onkeydown="if(event.key==='Enter')checkProva('${s}')">
+      <button class="pv-btn" onclick="checkProva('${s}')">✓ Verifica</button>
+      <button class="pv-btn ghost" onclick="hintProva('${s}')">💡 Suggerimento</button>
+      <button class="pv-btn ghost" onclick="solProva('${s}')">📝 Soluzione</button>
+      <button class="pv-btn ghost" onclick="nextProva('${s}')">➡️ Nuovo</button>
+    </div>
+    <div id="pv-fb-${s}" class="pv-fb" style="display:none"></div>
+    <div id="pv-hint-${s}" class="pv-hint" style="display:none"></div>
+    <div id="pv-sol-${s}" class="pv-sol" style="display:none"></div>
+    <div class="pv-note">Suggerimento: puoi scrivere numeri decimali (con la virgola o il punto) e frazioni come −1/2.</div></div>`;
+}
+function parseNum(str){ if(str==null)return NaN; str=(''+str).trim().replace(',','.').replace(/−/g,'-').replace(/\s+/g,''); if(str==='')return NaN;
+  if(/^[-+]?\d+\/\d+$/.test(str)){const p=str.split('/');return parseFloat(p[0])/parseFloat(p[1]);} return parseFloat(str); }
+function checkProva(s){ const ex=PV[s][pvState[s].i],v=parseNum(el('pv-in-'+s).value),fb=el('pv-fb-'+s); fb.style.display='';
+  if(isNaN(v)){fb.className='pv-fb no';fb.innerHTML='✗ Inserisci un numero (es. 5, −2 oppure 1/2).';return;}
+  const tol=ex.tol||1e-6;
+  if(Math.abs(v-ex.ans)<=tol){fb.className='pv-fb ok';fb.innerHTML='✓ Esatto! Risposta corretta.';}
+  else{fb.className='pv-fb no';fb.innerHTML='✗ Non ci siamo. Prova un suggerimento o guarda la soluzione passo-passo.';} }
+function hintProva(s){ const ex=PV[s][pvState[s].i],h=el('pv-hint-'+s); pvState[s].hint=Math.min(pvState[s].hint+1,ex.hints.length);
+  h.style.display=''; h.innerHTML='💡 '+ex.hints.slice(0,pvState[s].hint).map(x=>'<div>'+x+'</div>').join('');
+  if(pvState[s].hint>=ex.hints.length)h.innerHTML+='<div style="opacity:.7;margin-top:.3rem">(nessun altro suggerimento)</div>'; }
+function solProva(s){ const ex=PV[s][pvState[s].i],sol=el('pv-sol-'+s); sol.style.display='';
+  sol.innerHTML='<b>Soluzione passo-passo</b><ol>'+ex.steps.map(x=>'<li>'+x+'</li>').join('')+'</ol><div style="margin-top:.3rem">Risposta: <b>'+fmt(ex.ans)+'</b></div>'; }
+function nextProva(s){ pvState[s].i=(pvState[s].i+1)%PV[s].length; pvState[s].hint=0; renderProva(s); }
+
+/* ============ QUIZ ============ */
+const QUIZ={
+gonio:[
+  {t:'mc',q:'Quanti radianti misura un angolo giro?',opts:['π','2π','π/2','360'],ans:1,exp:'L\'angolo giro corrisponde a un arco lungo come tutta la circonferenza (2πr): 2π radianti.'},
+  {t:'mc',q:'La circonferenza goniometrica ha raggio:',opts:['1','2','π','variabile'],ans:0,exp:'È la circonferenza unitaria, di raggio 1, centrata nell\'origine.'},
+  {t:'mc',q:'Il coseno di α è:',opts:['l\'ordinata di P','l\'ascissa di P','il raggio','la pendenza di OP'],ans:1,exp:'cos α è l\'ascissa (coordinata x) del punto P associato ad α.'},
+  {t:'mc',q:'Il valore di sin α è sempre compreso:',opts:['tra 0 e 1','tra −1 e 1','tra −2 e 2','qualsiasi'],ans:1,exp:'P sta sul cerchio di raggio 1, quindi le sue coordinate stanno tra −1 e 1.'},
+  {t:'mc',q:'La tangente è definita come:',opts:['cos α / sin α','sin α / cos α','sin α · cos α','1 / sin α'],ans:1,exp:'tan α = sin α / cos α, con cos α ≠ 0.'},
+  {t:'mc',q:'Nel 2º quadrante il coseno è:',opts:['positivo','negativo','nullo','uguale a 1'],ans:1,exp:'Nel 2º quadrante l\'ascissa è negativa: cos α &lt; 0 (mentre sin α &gt; 0).'},
+  {t:'mc',q:'La funzione tan x non è definita per:',opts:['x = kπ','x = π/2 + kπ','nessun valore','x = 0'],ans:1,exp:'Dove cos x = 0, cioè x = π/2 + kπ, la tangente non esiste.'},
+  {t:'mc',q:'Il periodo di y = sin x è:',opts:['π','2π','π/2','4π'],ans:1,exp:'Seno e coseno si ripetono identici ogni 2π.'},
+  {t:'mc',q:'Il periodo di y = tan x è:',opts:['π','2π','π/2','3π'],ans:0,exp:'La tangente ha periodo π, metà di quello di seno e coseno.'},
+  {t:'mc',q:'In quale quadrante si ha sin α &gt; 0 e cos α &lt; 0?',opts:['I','II','III','IV'],ans:1,exp:'Nel 2º quadrante l\'ordinata è positiva e l\'ascissa negativa.'},
+  {t:'num',q:'Quanto vale sin 0°?',ans:0,exp:'Il punto a 0° è (1, 0): l\'ordinata, cioè il seno, è 0.'},
+  {t:'num',q:'Quanto vale cos 0°?',ans:1,exp:'Il punto a 0° è (1, 0): l\'ascissa, cioè il coseno, è 1.'},
+  {t:'num',q:'180° equivalgono a k·π radianti. Quanto vale k?',ans:1,exp:'180° = π rad, quindi k = 1.'},
+  {t:'num',q:'90° equivalgono a k·π radianti. Quanto vale k? (decimale)',ans:0.5,tol:0.01,exp:'90° = π/2 rad, quindi k = 0,5.'}
+],
+noti:[
+  {t:'mc',q:'Quanto vale sin 30°?',opts:['1/2','√2/2','√3/2','1'],ans:0,exp:'sin 30° = 1/2.'},
+  {t:'mc',q:'Quanto vale cos 30°?',opts:['1/2','√2/2','√3/2','1'],ans:2,exp:'cos 30° = √3/2.'},
+  {t:'mc',q:'sin 45° è uguale a:',opts:['cos 45°','sin 30°','1','0'],ans:0,exp:'A 45° seno e coseno coincidono: sin 45° = cos 45° = √2/2.'},
+  {t:'mc',q:'Quanto vale tan 45°?',opts:['0','1','√3','non esiste'],ans:1,exp:'tan 45° = sin 45°/cos 45° = 1.'},
+  {t:'mc',q:'Quanto vale tan 90°?',opts:['0','1','√3','non esiste'],ans:3,exp:'A 90° cos = 0: la tangente non esiste.'},
+  {t:'mc',q:'Quanto vale sin 90°?',opts:['0','1/2','1','√3/2'],ans:2,exp:'Il punto a 90° è (0, 1): sin 90° = 1.'},
+  {t:'mc',q:'sin 60° è uguale a:',opts:['cos 30°','cos 60°','sin 30°','tan 60°'],ans:0,exp:'sin 60° = √3/2 = cos 30° (angoli complementari).'},
+  {t:'mc',q:'Quanto vale cos 45°?',opts:['√2/2','√3/2','1/2','1'],ans:0,exp:'cos 45° = √2/2 ≈ 0,707.'},
+  {t:'num',q:'Quanto vale 2·sin 30°?',ans:1,exp:'2·(1/2) = 1.'},
+  {t:'num',q:'Quanto vale cos 60°? (decimale)',ans:0.5,tol:0.01,exp:'cos 60° = 1/2 = 0,5.'},
+  {t:'num',q:'Quanto vale sin²45° (cioè (sin 45°)²)? (decimale)',ans:0.5,tol:0.01,exp:'(√2/2)² = 2/4 = 0,5.'},
+  {t:'num',q:'Quanto vale tan 45° + sin 90°?',ans:2,exp:'1 + 1 = 2.'},
+  {t:'num',q:'Quanto vale cos 90° + sin 0°?',ans:0,exp:'0 + 0 = 0.'}
+],
+assoc:[
+  {t:'mc',q:'sin(−α) è uguale a:',opts:['sin α','−sin α','cos α','−cos α'],ans:1,exp:'Il seno è una funzione dispari: sin(−α) = −sin α.'},
+  {t:'mc',q:'cos(−α) è uguale a:',opts:['cos α','−cos α','sin α','−sin α'],ans:0,exp:'Il coseno è una funzione pari: cos(−α) = cos α.'},
+  {t:'mc',q:'sin(π − α) è uguale a:',opts:['sin α','−sin α','cos α','−cos α'],ans:0,exp:'Gli angoli supplementari hanno lo stesso seno.'},
+  {t:'mc',q:'cos(π − α) è uguale a:',opts:['cos α','−cos α','sin α','−sin α'],ans:1,exp:'Gli angoli supplementari hanno coseni opposti.'},
+  {t:'mc',q:'sin(π + α) è uguale a:',opts:['sin α','−sin α','cos α','−cos α'],ans:1,exp:'Simmetria rispetto all\'origine: sin(π + α) = −sin α.'},
+  {t:'mc',q:'tan(π + α) è uguale a:',opts:['tan α','−tan α','cot α','−cot α'],ans:0,exp:'La tangente ha periodo π: tan(π + α) = tan α.'},
+  {t:'mc',q:'sin(π/2 − α) è uguale a:',opts:['sin α','cos α','−cos α','−sin α'],ans:1,exp:'Il seno del complementare è il coseno: sin(π/2 − α) = cos α.'},
+  {t:'mc',q:'cos(π/2 − α) è uguale a:',opts:['sin α','cos α','−sin α','−cos α'],ans:0,exp:'Il coseno del complementare è il seno: cos(π/2 − α) = sin α.'},
+  {t:'mc',q:'cos 330° è uguale a:',opts:['cos 30°','−cos 30°','sin 30°','−sin 30°'],ans:0,exp:'330° = 360° − 30° (esplementare): cos(2π − α) = cos α.'},
+  {t:'mc',q:'Per ridurre sin 200° al 1º quadrante si usa:',opts:['200° = 180° + 20° ⟹ −sin 20°','200° = 180° − 20°','200° = 90° + 110°','non si può'],ans:0,exp:'200° = 180° + 20°, e sin(π + α) = −sin α ⟹ −sin 20°.'},
+  {t:'num',q:'sin 150° = sin 30° (supplementari). Quanto vale? (decimale)',ans:0.5,tol:0.01,exp:'sin 150° = sin 30° = 1/2 = 0,5.'},
+  {t:'num',q:'cos 120° = −cos 60°. Quanto vale? (decimale)',ans:-0.5,tol:0.01,exp:'cos 120° = −cos 60° = −1/2 = −0,5.'},
+  {t:'num',q:'sin(90° + 30°) = cos 30°. Quanto vale? (3 decimali)',ans:0.866,tol:0.005,exp:'cos 30° = √3/2 ≈ 0,866.'}
+],
+rel:[
+  {t:'mc',q:'La prima relazione fondamentale è:',opts:['sin²α + cos²α = 1','sin²α − cos²α = 1','sin α + cos α = 1','sin α · cos α = 1'],ans:0,exp:'È il teorema di Pitagora applicato al triangolo nel cerchio unitario.'},
+  {t:'mc',q:'tan α è uguale a:',opts:['sin α / cos α','cos α / sin α','sin α · cos α','1 / sin α'],ans:0,exp:'Seconda relazione fondamentale: tan α = sin α / cos α.'},
+  {t:'mc',q:'1 + tan²α è uguale a:',opts:['1/cos²α','1/sin²α','cos²α','sin²α'],ans:0,exp:'Dividendo sin²+cos²=1 per cos²α si ottiene 1 + tan²α = 1/cos²α.'},
+  {t:'mc',q:'La cotangente cot α è:',opts:['1/tan α','1/sin α','1/cos α','tan α'],ans:0,exp:'cot α = cos α/sin α = 1/tan α.'},
+  {t:'mc',q:'Il segno della radice in cos α = ±√(1 − sin²α) dipende da:',opts:['il quadrante di α','niente, è sempre +','è sempre −','la base'],ans:0,exp:'Va scelto in base al quadrante in cui cade α.'},
+  {t:'mc',q:'1 + cot²α è uguale a:',opts:['1/sin²α','1/cos²α','sin²α','1'],ans:0,exp:'Dividendo sin²+cos²=1 per sin²α si ottiene 1 + cot²α = 1/sin²α.'},
+  {t:'num',q:'Se sin α = 0,6 (α nel 1º quadrante), quanto vale cos α? (decimale)',ans:0.8,tol:0.01,exp:'cos α = √(1 − 0,36) = √0,64 = 0,8.'},
+  {t:'num',q:'Se cos α = 0,8 (α nel 1º quadrante), quanto vale sin α? (decimale)',ans:0.6,tol:0.01,exp:'sin α = √(1 − 0,64) = √0,36 = 0,6.'},
+  {t:'num',q:'Quanto vale sin²40° + cos²40°?',ans:1,exp:'Per la prima relazione fondamentale vale sempre 1.'},
+  {t:'num',q:'Se sin α = 3/5 e cos α = 4/5, quanto vale tan α? (decimale)',ans:0.75,tol:0.01,exp:'tan α = (3/5)/(4/5) = 3/4 = 0,75.'},
+  {t:'num',q:'Se cos α = −5/13 (2º quadrante, sin &gt; 0), quanto vale sin α? (3 decimali)',ans:0.923,tol:0.01,exp:'sin α = √(1 − 25/169) = 12/13 ≈ 0,923.'},
+  {t:'num',q:'Se tan α = 1 e α è nel 1º quadrante, quanto vale sin α? (3 decimali)',ans:0.707,tol:0.005,exp:'α = 45°, quindi sin α = √2/2 ≈ 0,707.'}
+],
+eqgon:[
+  {t:'mc',q:'L\'equazione sin x = m ha soluzioni se:',opts:['−1 ≤ m ≤ 1','m &gt; 0','m ≥ 1','sempre'],ans:0,exp:'Il seno assume solo valori tra −1 e 1.'},
+  {t:'mc',q:'L\'equazione tan x = m ha soluzioni per:',opts:['ogni m reale','−1 ≤ m ≤ 1','m &gt; 0','m ≠ 0'],ans:0,exp:'La tangente assume tutti i valori reali.'},
+  {t:'mc',q:'a·sin x + b·cos x = 0 (a ≠ 0) equivale a:',opts:['tan x = −b/a','tan x = a/b','sin x = 0','cos x = 0'],ans:0,exp:'Dividendo per cos x si ottiene a·tan x + b = 0 ⟹ tan x = −b/a.'},
+  {t:'mc',q:'Un\'equazione omogenea a·sin²x + b·sin x cos x + c·cos²x = 0 si risolve:',opts:['dividendo per cos²x','elevando al quadrato','con la radice','non si risolve'],ans:0,exp:'Si divide per cos²x ottenendo a·tan²x + b·tan x + c = 0.'},
+  {t:'mc',q:'tan x = 1 ha soluzioni:',opts:['x = π/4 + kπ','x = π/4 + 2kπ','x = ±π/4','x = π/2 + kπ'],ans:0,exp:'La tangente ha periodo π: x = π/4 + kπ.'},
+  {t:'mc',q:'Per rendere omogenea a·sin²x + b·sin x cos x + c·cos²x = d si sfrutta:',opts:['d = d(sin²x + cos²x)','d = 0','si divide per d','si eleva al quadrato'],ans:0,exp:'Si scrive d come d·(sin²x+cos²x) e si porta tutto a primo membro.'},
+  {t:'mc',q:'cos x = m con m = 2 ha:',opts:['nessuna soluzione','una soluzione','due soluzioni','infinite soluzioni'],ans:0,exp:'Il coseno non supera mai 1: |m| &gt; 1 ⟹ nessuna soluzione.'},
+  {t:'num',q:'Soluzione minore di cos x = 1 in [0°, 360°)? (gradi)',ans:0,exp:'cos x = 1 solo a x = 0° (nell\'intervallo).'},
+  {t:'num',q:'Soluzione minore di sin x = 1 in [0°, 360°)? (gradi)',ans:90,exp:'sin x = 1 solo a x = 90°.'},
+  {t:'num',q:'Quante soluzioni ha cos x = 2 in ℝ?',ans:0,exp:'Nessuna: il coseno non vale mai 2.'},
+  {t:'num',q:'Risolvi tan x = 0 in [0°, 360°): la soluzione minore (gradi).',ans:0,exp:'tan x = 0 per x = 0° e x = 180°; la minore è 0°.'},
+  {t:'num',q:'tan²x − 1 = 0 ⟹ tan x = ±1: la soluzione positiva minore in [0°,360°) (gradi).',ans:45,exp:'tan x = 1 ⟹ 45°; è la più piccola positiva.'}
+],
+rett:[
+  {t:'mc',q:'In a = c·sin α (angolo retto in C) l\'angolo α è:',opts:['l\'angolo opposto al cateto a','l\'angolo retto','adiacente ad a','uno qualsiasi'],ans:0,exp:'Il cateto è uguale all\'ipotenusa per il seno dell\'angolo opposto.'},
+  {t:'mc',q:'Per un angolo acuto, cos α =',opts:['cateto adiacente / ipotenusa','cateto opposto / ipotenusa','opposto / adiacente','ipotenusa / opposto'],ans:0,exp:'Definizione di coseno nel triangolo rettangolo.'},
+  {t:'mc',q:'a = b·tan α: la tangente è quella dell\'angolo:',opts:['opposto ad a','adiacente ad a','retto','β qualsiasi'],ans:0,exp:'2º teorema: cateto = altro cateto per la tangente dell\'angolo opposto al primo.'},
+  {t:'mc',q:'Per risolvere un triangolo rettangolo servono, oltre all\'angolo retto:',opts:['due dati di cui almeno un lato','due angoli','solo angoli','un solo dato'],ans:0,exp:'Servono due elementi, almeno uno dei quali sia un lato.'},
+  {t:'num',q:'c = 10, α = 30°: quanto vale il cateto a opposto ad α?',ans:5,exp:'a = c·sin α = 10·0,5 = 5.'},
+  {t:'num',q:'c = 8, α = 60°: quanto vale a = c·sin 60°? (2 decimali)',ans:6.93,tol:0.05,exp:'a = 8·0,866 ≈ 6,93.'},
+  {t:'num',q:'I cateti misurano 6 e 8: quanto vale l\'ipotenusa?',ans:10,exp:'√(36 + 64) = √100 = 10.'},
+  {t:'num',q:'a = 5, c = 10: quanto vale sin α? (decimale)',ans:0.5,tol:0.01,exp:'sin α = a/c = 5/10 = 0,5.'},
+  {t:'num',q:'α = 40°: quanto vale β? (gradi)',ans:50,exp:'Gli angoli acuti sono complementari: β = 90° − 40° = 50°.'},
+  {t:'num',q:'c = 13, a = 5: quanto vale l\'altro cateto b?',ans:12,exp:'b = √(c² − a²) = √(169 − 25) = √144 = 12.'},
+  {t:'num',q:'Cateti a = 3 e b = 4: area = (1/2)·a·b = ?',ans:6,exp:'(1/2)·3·4 = 6.'},
+  {t:'num',q:'c = 20, α = 30°: b = c·cos 30°? (2 decimali)',ans:17.32,tol:0.1,exp:'b = 20·0,866 ≈ 17,32.'}
+],
+corda:[
+  {t:'mc',q:'Il teorema della corda afferma che:',opts:['AB = 2R·sin γ','AB = R·sin γ','AB = 2R·cos γ','AB = R / sin γ'],ans:0,exp:'La corda è il diametro per il seno dell\'angolo alla circonferenza che la vede.'},
+  {t:'mc',q:'Nel teorema della corda, γ è l\'angolo:',opts:['alla circonferenza che insiste su AB','al centro','retto','esterno'],ans:0,exp:'È un angolo con vertice sulla circonferenza che "vede" la corda AB.'},
+  {t:'mc',q:'L\'angolo al centro rispetto a quello alla circonferenza (stessa corda) è:',opts:['il doppio','la metà','uguale','il triplo'],ans:0,exp:'L\'angolo al centro è doppio dell\'angolo alla circonferenza.'},
+  {t:'mc',q:'Se γ è ottuso, nel teorema della corda sin γ:',opts:['vale come il seno del supplementare: formula valida','è negativo','rende AB negativa','non vale'],ans:0,exp:'Angoli supplementari hanno lo stesso seno, quindi la formula resta valida.'},
+  {t:'mc',q:'Il teorema della corda è il ponte verso:',opts:['il teorema dei seni','il teorema di Pitagora','il teorema di Carnot','le derivate'],ans:0,exp:'Applicato ai lati del triangolo inscritto dà il teorema dei seni.'},
+  {t:'num',q:'R = 5, γ = 30°: quanto vale AB = 2R·sin 30°?',ans:5,exp:'AB = 2·5·0,5 = 5.'},
+  {t:'num',q:'AB = 10, γ = 90°: quanto vale il diametro 2R? (sin 90° = 1)',ans:10,exp:'AB = 2R·1 ⟹ 2R = 10.'},
+  {t:'num',q:'R = 10, γ = 30°: quanto vale la corda AB?',ans:10,exp:'AB = 2·10·0,5 = 10.'},
+  {t:'num',q:'AB = 12, γ = 30°: quanto vale R? (12 = 2R·0,5)',ans:12,exp:'12 = 2R·0,5 = R ⟹ R = 12.'},
+  {t:'num',q:'R = 5, γ = 90°: la corda (diametro) AB vale?',ans:10,exp:'AB = 2·5·1 = 10.'},
+  {t:'num',q:'Corda uguale al raggio (AB = R): sin γ = 1/2 ⟹ γ = ? (gradi, acuto)',ans:30,exp:'R = 2R·sin γ ⟹ sin γ = 1/2 ⟹ γ = 30°.'},
+  {t:'num',q:'R = 8, γ = 45°: AB = 2·8·sin 45°? (2 decimali, sin 45° ≈ 0,707)',ans:11.31,tol:0.1,exp:'AB = 16·0,707 ≈ 11,31.'}
+],
+seni:[
+  {t:'mc',q:'Il teorema dei seni afferma che:',opts:['a/sin α = b/sin β = c/sin γ','a·sin α = b·sin β','a² = b² + c²','a = b + c'],ans:0,exp:'I lati sono proporzionali ai seni degli angoli opposti.'},
+  {t:'mc',q:'Il rapporto comune a/sin α vale:',opts:['2R','R','R/2','πR'],ans:0,exp:'È il diametro della circonferenza circoscritta: a/sin α = 2R.'},
+  {t:'mc',q:'Quando conviene il teorema dei seni?',opts:['noto un lato e l\'angolo opposto','noti i tre lati','noti due lati e l\'angolo compreso','mai'],ans:0,exp:'Serve una coppia lato–angolo opposto per trovare 2R.'},
+  {t:'mc',q:'Nel caso LLA (due lati e un angolo opposto) il triangolo:',opts:['può avere 0, 1 o 2 soluzioni','è sempre unico','non esiste mai','è equilatero'],ans:0,exp:'È il "caso ambiguo": le soluzioni possono essere due, una o nessuna.'},
+  {t:'num',q:'α = 30°, a = 5: quanto vale 2R = a/sin 30°?',ans:10,exp:'2R = 5/0,5 = 10.'},
+  {t:'num',q:'2R = 10, β = 30°: quanto vale b = 2R·sin β?',ans:5,exp:'b = 10·0,5 = 5.'},
+  {t:'num',q:'a = 8 con α = 90°: quanto vale 2R?',ans:8,exp:'2R = 8/sin 90° = 8/1 = 8.'},
+  {t:'num',q:'a = 6, sin α = 0,5, sin β = 0,5: quanto vale b?',ans:6,exp:'b = a·sin β/sin α = 6·0,5/0,5 = 6 (triangolo isoscele).'},
+  {t:'num',q:'α = 45°, β = 60°: quanto vale γ? (gradi)',ans:75,exp:'γ = 180° − 45° − 60° = 75°.'},
+  {t:'num',q:'a = 10, α = 30°, β = 90° (sin β = 1): quanto vale b = a·sin β/sin α?',ans:20,exp:'b = 10·1/0,5 = 20.'},
+  {t:'num',q:'2R = 12, γ = 30°: quanto vale c = 2R·sin γ?',ans:6,exp:'c = 12·0,5 = 6.'},
+  {t:'num',q:'a = 7 con α = β = 30°: quanto vale b? (triangolo isoscele)',ans:7,exp:'Angoli uguali ⟹ lati opposti uguali: b = a = 7.'}
+],
+carnot:[
+  {t:'mc',q:'Il teorema di Carnot afferma che:',opts:['a² = b² + c² − 2bc·cos α','a² = b² + c²','a = b + c − 2bc','a² = b² + c² + 2bc·cos α'],ans:0,exp:'È il "Pitagora generalizzato" con il termine correttivo −2bc·cos α.'},
+  {t:'mc',q:'Se α = 90° il teorema di Carnot diventa:',opts:['Pitagora: a² = b² + c²','a = b + c','a² = 2bc','a = 0'],ans:0,exp:'cos 90° = 0: il termine correttivo sparisce.'},
+  {t:'mc',q:'Per α acuto il termine −2bc·cos α è:',opts:['negativo','positivo','nullo','uguale a 1'],ans:0,exp:'cos α &gt; 0 per α acuto, quindi −2bc·cos α &lt; 0.'},
+  {t:'mc',q:'Per α ottuso il lato opposto a risulta:',opts:['più lungo che con α retto','più corto','uguale','nullo'],ans:0,exp:'cos α &lt; 0: il termine si somma, a aumenta.'},
+  {t:'mc',q:'Il teorema di Carnot si usa nei casi:',opts:['LAL e LLL','solo LLL','solo con gli angoli','ALA'],ans:0,exp:'Due lati e l\'angolo compreso (LAL) o tre lati (LLL).'},
+  {t:'num',q:'b = 5, c = 8, α = 60°: quanto vale a²? (= 89 − 80·cos 60°)',ans:49,exp:'a² = 25 + 64 − 80·0,5 = 89 − 40 = 49.'},
+  {t:'num',q:'…e quindi quanto vale a?',ans:7,exp:'a = √49 = 7.'},
+  {t:'num',q:'b = 3, c = 4, α = 90°: quanto vale a?',ans:5,exp:'cos 90° = 0 ⟹ a² = 9 + 16 = 25 ⟹ a = 5.'},
+  {t:'num',q:'Lati a = 7, b = 5, c = 8: quanto vale cos α? (decimale)',ans:0.5,tol:0.01,exp:'cos α = (25 + 64 − 49)/80 = 40/80 = 0,5.'},
+  {t:'num',q:'…l\'angolo α con cos α = 0,5 vale? (gradi)',ans:60,exp:'cos α = 0,5 ⟹ α = 60°.'},
+  {t:'num',q:'b = 2, c = 2, α = 60°: quanto vale a²? (= 8 − 8·cos 60°)',ans:4,exp:'a² = 4 + 4 − 8·0,5 = 8 − 4 = 4 (triangolo equilatero).'},
+  {t:'num',q:'b = 6, c = 6, α = 90°: quanto vale a²? (Pitagora)',ans:72,exp:'a² = 36 + 36 = 72.'}
+]
+};
+const qz={}; Object.keys(QUIZ).forEach(s=>qz[s]={idx:0,score:0,answered:false,done:false,reviewing:false,rec:[]});
+function renderQuiz(s){
+  const e=el('qz-'+s); if(!e)return; const st=qz[s],qs=QUIZ[s],total=qs.length; let body;
+  if(st.reviewing){ body=renderReview(s); }
+  else if(st.done){
+    const pct=st.score/total,mi=pct<=.4?0:pct<=.6?1:pct<=.8?2:pct<1?3:4;
+    const icons=['😕','🙂','😊','🎉','🏆'];
+    const msgs=['Da rivedere — rileggi la teoria e riprova.','Sufficiente — qualche lacuna da colmare.','Buono — ci sei quasi!','Ottimo risultato!','Perfetto — nessun errore!'];
+    body=`<div class="quiz-done"><span class="quiz-score-big">${icons[mi]} ${st.score}/${total}</span><p class="quiz-msg">${msgs[mi]}</p>
+      <div class="quiz-actions"><button class="quiz-review alt" onclick="reviewQuiz('${s}')">🔍 Rivedi risposte</button>
+      <button class="quiz-restart" onclick="restartQuiz('${s}')">🔄 Ricomincia</button></div></div>`;
+  } else {
+    const q=qs[st.idx],pct=st.idx/total*100;
+    const tag=q.t==='num'?'<span class="quiz-tag num">CALCOLO NUMERICO</span>':'<span class="quiz-tag mc">SCELTA MULTIPLA</span>';
+    let interactive;
+    if(q.t==='num'){ interactive=`<div class="quiz-numrow">
+        <input class="quiz-num" id="qnum-${s}" inputmode="text" placeholder="Risultato…" onkeydown="if(event.key==='Enter')answerNum('${s}')">
+        <button class="quiz-check" id="qchk-${s}" onclick="answerNum('${s}')">✓ Verifica</button></div>`;
+    } else { interactive=`<div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-btn" id="qb-${s}-${i}" onclick="answerMc('${s}',${i})">${'ABCD'[i]}) ${o}</button>`).join('')}</div>`; }
+    body=`<div class="quiz-hd"><span style="color:var(--muted)">Domanda ${st.idx+1} / ${total}</span>
+        <span style="font-weight:700;color:var(--primary-d)">Punteggio: ${st.score}</span></div>
+      <div class="quiz-bar-wrap"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+      ${tag}<p class="quiz-q">${q.q}</p>${interactive}
+      <div class="quiz-exp" id="qexp-${s}" style="display:none"></div>
+      <button class="quiz-next" id="qnxt-${s}" style="display:none" onclick="nextQuiz('${s}')">${st.idx+1<total?'Prossima domanda →':'Vedi il risultato finale →'}</button>`;
+  }
+  e.innerHTML=`<div class="card"><h2>🧩 Quiz</h2>${body}</div>`;
+}
+function feedback(s,correct,exp){ const e=el('qexp-'+s); e.style.display=''; e.className=`quiz-exp ${correct?'ok':'no'}`;
+  e.innerHTML=`<strong>${correct?'✓ Corretto!':'✗ Sbagliato.'}</strong> ${exp}`; el('qnxt-'+s).style.display=''; }
+function answerMc(s,chosen){ const st=qz[s]; if(st.answered)return; st.answered=true;
+  const q=QUIZ[s][st.idx],correct=chosen===q.ans; if(correct)st.score++;
+  for(let i=0;i<q.opts.length;i++){ const b=el(`qb-${s}-${i}`); if(!b)continue; b.disabled=true; if(i===q.ans)b.classList.add('correct'); else if(i===chosen)b.classList.add('wrong'); }
+  st.rec[st.idx]={ok:correct,given:`${'ABCD'[chosen]}) ${q.opts[chosen]}`,correct:`${'ABCD'[q.ans]}) ${q.opts[q.ans]}`,q:q.q,exp:q.exp}; feedback(s,correct,q.exp); }
+function answerNum(s){ const st=qz[s]; if(st.answered)return; const inp=el('qnum-'+s),v=parseNum(inp.value);
+  if(isNaN(v)){ inp.focus(); inp.style.borderColor='#c62828'; return; } st.answered=true;
+  const q=QUIZ[s][st.idx],tol=q.tol||1e-6,correct=Math.abs(v-q.ans)<=tol; if(correct)st.score++;
+  inp.disabled=true; const c=el('qchk-'+s); if(c)c.disabled=true;
+  st.rec[st.idx]={ok:correct,given:fmt(v),correct:fmt(q.ans),q:q.q,exp:q.exp}; feedback(s,correct,q.exp); }
+function nextQuiz(s){ const st=qz[s]; st.idx++; st.answered=false; if(st.idx>=QUIZ[s].length)st.done=true; renderQuiz(s); }
+function restartQuiz(s){ qz[s]={idx:0,score:0,answered:false,done:false,reviewing:false,rec:[]}; renderQuiz(s); }
+function reviewQuiz(s){ qz[s].reviewing=true; renderQuiz(s); }
+function closeReview(s){ qz[s].reviewing=false; renderQuiz(s); }
+function renderReview(s){ const st=qz[s];
+  const items=st.rec.map((r,i)=>`<div class="rv-item ${r.ok?'ok':'no'}">
+      <div class="rv-q">${i+1}. ${r.q}</div>
+      <div class="rv-line">Risposta data: <b class="${r.ok?'ok':'no'}">${r.given}</b></div>
+      ${r.ok?'':`<div class="rv-line">Risposta corretta: <b class="ok">${r.correct}</b></div>`}
+      <div class="rv-exp">${r.exp}</div></div>`).join('');
+  return `<p style="color:var(--muted);font-size:.9em;margin:.3rem 0 .6rem">Revisione delle ${st.rec.length} domande — verde corrette, rosso sbagliate.</p>
+    ${items}<div class="quiz-actions" style="margin-top:.8rem">
+      <button class="quiz-review alt" onclick="closeReview('${s}')">← Torna al risultato</button>
+      <button class="quiz-restart" onclick="restartQuiz('${s}')">🔄 Ricomincia</button></div>`;
+}
+
+/* ============ INIT ============ */
+Object.keys(QUIZ).forEach(renderQuiz);
+Object.keys(PV).forEach(renderProva);
+</script>
+</body>
+</html>
