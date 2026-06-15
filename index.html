@@ -343,13 +343,14 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
 
     <div class="card">
       <h2>I punti notevoli nel piano cartesiano</h2>
-      <p>Per ogni angolo è segnato il punto P sulla circonferenza goniometrica con le sue <strong>coordinate (cos α; sin α)</strong>. Si nota subito la simmetria dei punti rispetto agli assi e all'origine.</p>
-      <h3>Multipli di 45°</h3>
+      <p>Per ogni angolo è segnato il punto P sulla circonferenza goniometrica con la misura in <strong>gradi e radianti</strong> e le <strong>coordinate (cos α; sin α)</strong>. Un'<strong>animazione</strong> evidenzia gli angoli in successione (in senso antiorario); si nota subito la simmetria dei punti rispetto agli assi e all'origine.</p>
+      <h3>Multipli di 45° (multipli di π/4)</h3>
       <div class="diagram"><canvas id="cv-noti-w45"></canvas><p class="cap">0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°: le coordinate valgono 0, ±1 oppure ±√2/2.</p></div>
-      <h3>Multipli di 60°</h3>
+      <h3>Multipli di 60° (multipli di π/3)</h3>
       <div class="diagram"><canvas id="cv-noti-w60"></canvas><p class="cap">0°, 60°, 120°, 180°, 240°, 300°: le coordinate combinano ±1/2 e ±√3/2 (e ±1 sugli assi).</p></div>
-      <h3>Gli angoli 30°, 150°, 210° e 300°</h3>
-      <div class="diagram"><canvas id="cv-noti-w30"></canvas><p class="cap">Le coordinate richieste: a 30°, 150° e 210° valgono (±√3/2; ±1/2); a 300° valgono (1/2; −√3/2).</p></div>
+      <h3>Gli angoli 30°, 150°, 210° e 330°</h3>
+      <div class="diagram"><canvas id="cv-noti-w30"></canvas><p class="cap">30° = π/6, 150° = 5π/6, 210° = 7π/6, 330° = 11π/6: tutti con coordinate (±√3/2; ±1/2).</p></div>
+      <div style="text-align:center;margin:.2rem 0 0"><button class="btn ghost" id="anim-noti" onclick="tToggle('noti',this)">⏸ Pausa</button></div>
     </div>
   </div>
 
@@ -1091,10 +1092,10 @@ const MULT60=[
   {deg:0,xy:'(1; 0)'},{deg:60,xy:'(1/2; √3/2)'},{deg:120,xy:'(−1/2; √3/2)'},
   {deg:180,xy:'(−1; 0)'},{deg:240,xy:'(−1/2; −√3/2)'},{deg:300,xy:'(1/2; −√3/2)'}
 ];
-const ANG30=[
-  {deg:30,xy:'(√3/2; 1/2)'},{deg:150,xy:'(−√3/2; 1/2)'},{deg:210,xy:'(−√3/2; −1/2)'},{deg:300,xy:'(1/2; −√3/2)'}
+const ANG330=[
+  {deg:30,xy:'(√3/2; 1/2)'},{deg:150,xy:'(−√3/2; 1/2)'},{deg:210,xy:'(−√3/2; −1/2)'},{deg:330,xy:'(√3/2; −1/2)'}
 ];
-function drawWheel(cv,pts){
+function drawWheel(cv,pts,opts){
   if(!cv)return; const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1;
   const W=cv.clientWidth||320,H=cv.clientHeight||320; if(!W||!H)return;
   cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
@@ -1112,16 +1113,17 @@ function drawWheel(cv,pts){
   ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('1',px(0)-4,py(1));ctx.fillText('−1',px(0)-4,py(-1));
   // circonferenza
   ctx.strokeStyle=CIRCC;ctx.lineWidth=2;ctx.beginPath();ctx.arc(ox,oy,s,0,7);ctx.stroke();
-  // punti + etichette
-  pts.forEach(p=>{
-    const r=rad(p.deg),c=Math.cos(r),sn=Math.sin(r);
-    ctx.strokeStyle='#c2d2e8';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(px(c),py(sn));ctx.stroke();
-    ctx.fillStyle=ACC;ctx.beginPath();ctx.arc(px(c),py(sn),4,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.4;ctx.stroke();
+  // punti + etichette (gradi · radianti e coordinate); 'active' evidenzia il punto corrente
+  const active=opts&&typeof opts.active==='number'?opts.active:-1;
+  pts.forEach((p,j)=>{
+    const r=rad(p.deg),c=Math.cos(r),sn=Math.sin(r),on=(j===active);
+    ctx.strokeStyle=on?PRIMARY:'#c2d2e8';ctx.lineWidth=on?2.4:1.2;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(px(c),py(sn));ctx.stroke();
+    ctx.fillStyle=on?PRIMARY:ACC;ctx.beginPath();ctx.arc(px(c),py(sn),on?6:3.8,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
     const lr=1.15,lx=px(c*lr),ly=py(sn*lr);
     ctx.textAlign = c>0.25?'left': c<-0.25?'right':'center';
     ctx.textBaseline='middle';
-    ctx.fillStyle=PRIMARYD;ctx.font='bold 11px sans-serif';ctx.fillText(p.deg+'°',lx,ly-7);
-    ctx.fillStyle='#2a3a4a';ctx.font='12px Georgia,serif';ctx.fillText(p.xy,lx,ly+7);
+    ctx.font='bold 11px sans-serif';ctx.fillStyle=on?ACC:PRIMARYD;ctx.fillText(p.deg+'° · '+fmtRad(p.deg),lx,ly-7);
+    ctx.font=(on?'bold 12px':'12px')+' Georgia,serif';ctx.fillStyle=on?ACC:'#2a3a4a';ctx.fillText(p.xy,lx,ly+7);
   });
   ctx.restore();
 }
@@ -1222,9 +1224,7 @@ function rdNoti(){
   drawTri(el('cv-noti-tri'),{pts:[[0,Math.sqrt(3)/2],[0.5,0],[0,0]],vlabels:['A','B','C'],right:2,
     angles:[{at:0,label:'30°',col:ACC},{at:1,label:'60°',col:TEAL}],slabels:['½','√3/2','1']});
   drawCircle(el('cv-noti-circle'),{noMain:true,marks:[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330].map(d=>({deg:d,label:d+'°'}))});
-  drawWheel(el('cv-noti-w45'),MULT45);
-  drawWheel(el('cv-noti-w60'),MULT60);
-  drawWheel(el('cv-noti-w30'),ANG30);
+  tStart('noti');
 }
 function rdAssoc(){ tStart('assoc'); }
 function rdRel(){ tStart('rel'); }
@@ -1258,17 +1258,29 @@ function stopAnim(){ if(animRAF)cancelAnimationFrame(animRAF); animRAF=null; if(
 /* ---- animazioni dei diagrammi di teoria (con pulsante Pausa/Riprendi) ---- */
 const reduceMotion=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 const TANIM={
-  gonio:{ang:25,raf:null,paused:false,draw(a){drawCircle(el('cv-gonio-circle'),{deg:a,show:{sin:true,cos:true,tan:true,radius:true},annot:true});}},
-  assoc:{ang:25,raf:null,paused:false,draw(a){drawCircle(el('cv-assoc-circle'),{deg:a,deg2:180-a,show:{sin:false,cos:false,tan:false,radius:true},label1:'α',label2:'π−α'});}},
-  rel:{ang:20,raf:null,paused:false,draw(a){drawCircle(el('cv-rel-circle'),{deg:a,show:{sin:true,cos:true,tan:false,radius:true},annot:true});}}
+  gonio:{raf:null,paused:false,ang:25,
+    frame(){ this.ang+=0.5; if(this.ang>=360)this.ang-=360; this.draw0(); },
+    draw0(){ drawCircle(el('cv-gonio-circle'),{deg:this.ang,show:{sin:true,cos:true,tan:true,radius:true},annot:true}); }},
+  assoc:{raf:null,paused:false,ang:25,
+    frame(){ this.ang+=0.5; if(this.ang>=360)this.ang-=360; this.draw0(); },
+    draw0(){ drawCircle(el('cv-assoc-circle'),{deg:this.ang,deg2:180-this.ang,show:{sin:false,cos:false,tan:false,radius:true},label1:'α',label2:'π−α'}); }},
+  rel:{raf:null,paused:false,ang:20,
+    frame(){ this.ang+=0.5; if(this.ang>=360)this.ang-=360; this.draw0(); },
+    draw0(){ drawCircle(el('cv-rel-circle'),{deg:this.ang,show:{sin:true,cos:true,tan:false,radius:true},annot:true}); }},
+  noti:{raf:null,paused:false,f:0,_last:-1,
+    idx(){ return Math.floor(this.f/48); },
+    frame(){ this.f++; const i=this.idx(); if(i!==this._last){ this._last=i; this.draw0(); } },
+    draw0(){ const i=this.idx();
+      drawWheel(el('cv-noti-w45'),MULT45,{active:i%MULT45.length});
+      drawWheel(el('cv-noti-w60'),MULT60,{active:i%MULT60.length});
+      drawWheel(el('cv-noti-w30'),ANG330,{active:i%ANG330.length}); }}
 };
-function tFrame(key){ const t=TANIM[key]; if(!t||t.paused)return; t.ang+=0.5; if(t.ang>=360)t.ang-=360; t.draw(t.ang); t.raf=requestAnimationFrame(()=>tFrame(key)); }
-function tStart(key,manual){ tStop(key); const t=TANIM[key]; if(!t)return;
-  if(t.paused||(reduceMotion&&!manual)){ t.draw(t.ang); return; } tFrame(key); }
+function tFrame(key){ const t=TANIM[key]; if(!t||t.paused)return; t.frame(); t.raf=requestAnimationFrame(()=>tFrame(key)); }
+function tStart(key,manual){ tStop(key); const t=TANIM[key]; if(!t)return; t.draw0(); if(t.paused||(reduceMotion&&!manual))return; tFrame(key); }
 function tStop(key){ const t=TANIM[key]; if(t&&t.raf){cancelAnimationFrame(t.raf);t.raf=null;} }
 function tStopAll(){ Object.keys(TANIM).forEach(tStop); }
 function tToggle(key,btn){ const t=TANIM[key]; t.paused=!t.paused;
-  if(t.paused){ tStop(key); t.draw(t.ang); btn.textContent='▶ Riprendi'; }
+  if(t.paused){ tStop(key); btn.textContent='▶ Riprendi'; }
   else { btn.textContent='⏸ Pausa'; tStart(key,true); } }
 
 /* ============ NAVIGAZIONE ============ */
