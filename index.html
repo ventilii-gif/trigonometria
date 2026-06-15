@@ -246,7 +246,7 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
       <p>Poiché P sta sulla circonferenza di raggio 1, si ha sempre <strong>−1 ≤ sin α ≤ 1</strong> e <strong>−1 ≤ cos α ≤ 1</strong>. La <strong>tangente</strong> è l'ordinata del punto in cui la retta OP incontra la retta verticale x = 1 (l'«asse delle tangenti»):</p>
       <div class="formula">tan α = sin α / cos α   (con cos α ≠ 0)</div>
       <div class="diagram"><canvas id="cv-gonio-circle"></canvas><p class="cap">🔄 Animazione: il punto P ruota. <b style="color:#ef6c00">cos α</b> è il segmento orizzontale, <b style="color:#2e7d32">sen α</b> quello verticale, <b style="color:#7b1fa2">tan α</b> è letta sull'asse x = 1.</p></div>
-      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-gonio" onclick="tToggle('gonio',this)">⏸ Pausa</button></div>
+      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-gonio" data-anim="gonio" onclick="tToggle('gonio')">⏸ Pausa</button></div>
       <p>Si definiscono anche le funzioni reciproche: <strong>cotangente</strong> cot α = cos α/sin α = 1/tan α, <strong>secante</strong> sec α = 1/cos α e <strong>cosecante</strong> csc α = 1/sin α.</p>
     </div>
 
@@ -337,7 +337,8 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
     <div class="card">
       <h2>Oltre il primo quadrante</h2>
       <p>I valori degli altri quadranti si ottengono da quelli del primo applicando le regole degli <strong>archi associati</strong> (sezione successiva) e i segni di ciascun quadrante. La figura mostra dove cadono i punti notevoli sulla circonferenza.</p>
-      <div class="diagram"><canvas id="cv-noti-circle"></canvas><p class="cap">I principali archi notevoli sulla circonferenza goniometrica (multipli di 30° e di 45°).</p></div>
+      <div class="diagram"><canvas id="cv-noti-circle"></canvas><p class="cap">🔄 Animazione: il raggio percorre i 16 archi notevoli in successione e per ciascuno mostra gradi e radianti con i segmenti di seno (verde) e coseno (arancio).</p></div>
+      <div style="text-align:center;margin:-.1rem 0 .3rem"><button class="btn ghost" id="anim-noti2" data-anim="noti" onclick="tToggle('noti')">⏸ Pausa</button></div>
       <div class="ex"><b>Es.</b> sin 150° = sin(180°−30°) = sin 30° = 1/2 ; &nbsp; cos 240° = cos(180°+60°) = −cos 60° = −1/2.</div>
     </div>
 
@@ -350,7 +351,7 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
       <div class="diagram"><canvas id="cv-noti-w60"></canvas><p class="cap">0°, 60°, 120°, 180°, 240°, 300°: le coordinate combinano ±1/2 e ±√3/2 (e ±1 sugli assi).</p></div>
       <h3>Gli angoli 30°, 150°, 210° e 330°</h3>
       <div class="diagram"><canvas id="cv-noti-w30"></canvas><p class="cap">30° = π/6, 150° = 5π/6, 210° = 7π/6, 330° = 11π/6: tutti con coordinate (±√3/2; ±1/2).</p></div>
-      <div style="text-align:center;margin:.2rem 0 0"><button class="btn ghost" id="anim-noti" onclick="tToggle('noti',this)">⏸ Pausa</button></div>
+      <div style="text-align:center;margin:.2rem 0 0"><button class="btn ghost" id="anim-noti" data-anim="noti" onclick="tToggle('noti')">⏸ Pausa</button></div>
     </div>
   </div>
 
@@ -408,7 +409,7 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
       <h2>🔄 Archi associati a un angolo α</h2>
       <p>Due archi si dicono <strong>associati</strong> quando i loro punti sulla circonferenza sono simmetrici. Le relazioni che ne derivano permettono di <strong>ricondurre qualsiasi angolo al primo quadrante</strong>, dove i valori sono noti.</p>
       <div class="diagram"><canvas id="cv-assoc-circle"></canvas><p class="cap">🔄 Animazione: <b style="color:#1565c0">α</b> e il suo supplementare <b style="color:#c2185b">π − α</b> restano simmetrici rispetto all'asse y, quindi hanno lo stesso seno e coseni opposti.</p></div>
-      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-assoc" onclick="tToggle('assoc',this)">⏸ Pausa</button></div>
+      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-assoc" data-anim="assoc" onclick="tToggle('assoc')">⏸ Pausa</button></div>
     </div>
 
     <div class="card">
@@ -484,7 +485,7 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
       <p>Il punto P = (cos α, sin α) sta sulla circonferenza di raggio 1. Il triangolo rettangolo che ha per cateti il coseno e il seno e per ipotenusa il raggio dà, per il teorema di Pitagora, l'identità più importante della goniometria:</p>
       <div class="formula">sin²α + cos²α = 1</div>
       <div class="diagram"><canvas id="cv-rel-circle"></canvas><p class="cap">🔄 Animazione: l'angolo α ruota. <b style="color:#2e7d32">sen α</b> (verde) e <b style="color:#ef6c00">cos α</b> (arancio) sono i cateti, l'ipotenusa è 1: per Pitagora cos²α + sin²α = 1, sempre.</p></div>
-      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-rel" onclick="tToggle('rel',this)">⏸ Pausa</button></div>
+      <div style="text-align:center;margin:-.1rem 0 .4rem"><button class="btn ghost" id="anim-rel" data-anim="rel" onclick="tToggle('rel')">⏸ Pausa</button></div>
       <p>Da essa si ricava una funzione dall'altra (il segno dipende dal quadrante):</p>
       <div class="formula">sin α = ±√(1 − cos²α) ;  cos α = ±√(1 − sin²α)</div>
     </div>
@@ -979,6 +980,7 @@ function drawCircle(cv,cfg){
     if(cfg.deg2!=null) drawOne(cfg.deg2, cfg.col2||ROSE, ROSEFILL, cfg.label2||"P'", 0.47, false);
     drawOne(cfg.deg, PRIMARY, ANGFILL, cfg.label1==null?'P':cfg.label1, 0.32, cfg.annot);
   }
+  if(cfg.caption){ ctx.fillStyle=PRIMARYD;ctx.font='bold 13px sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(cfg.caption,10,8); }
   ctx.restore();
 }
 
@@ -1095,6 +1097,8 @@ const MULT60=[
 const ANG330=[
   {deg:30,xy:'(√3/2; 1/2)'},{deg:150,xy:'(−√3/2; 1/2)'},{deg:210,xy:'(−√3/2; −1/2)'},{deg:330,xy:'(√3/2; −1/2)'}
 ];
+const NOTI16=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+const NOTI16MK=NOTI16.map(d=>({deg:d,label:d+'°'}));
 function drawWheel(cv,pts,opts){
   if(!cv)return; const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1;
   const W=cv.clientWidth||320,H=cv.clientHeight||320; if(!W||!H)return;
@@ -1223,7 +1227,6 @@ function rdGonio(){
 function rdNoti(){
   drawTri(el('cv-noti-tri'),{pts:[[0,Math.sqrt(3)/2],[0.5,0],[0,0]],vlabels:['A','B','C'],right:2,
     angles:[{at:0,label:'30°',col:ACC},{at:1,label:'60°',col:TEAL}],slabels:['½','√3/2','1']});
-  drawCircle(el('cv-noti-circle'),{noMain:true,marks:[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330].map(d=>({deg:d,label:d+'°'}))});
   tStart('noti');
 }
 function rdAssoc(){ tStart('assoc'); }
@@ -1270,7 +1273,8 @@ const TANIM={
   noti:{raf:null,paused:false,f:0,_last:-1,
     idx(){ return Math.floor(this.f/48); },
     frame(){ this.f++; const i=this.idx(); if(i!==this._last){ this._last=i; this.draw0(); } },
-    draw0(){ const i=this.idx();
+    draw0(){ const i=this.idx(),a=NOTI16[i%NOTI16.length];
+      drawCircle(el('cv-noti-circle'),{deg:a,marks:NOTI16MK,show:{sin:true,cos:true,radius:true},annot:true,label1:'',caption:a+'° = '+fmtRad(a)});
       drawWheel(el('cv-noti-w45'),MULT45,{active:i%MULT45.length});
       drawWheel(el('cv-noti-w60'),MULT60,{active:i%MULT60.length});
       drawWheel(el('cv-noti-w30'),ANG330,{active:i%ANG330.length}); }}
@@ -1279,9 +1283,10 @@ function tFrame(key){ const t=TANIM[key]; if(!t||t.paused)return; t.frame(); t.r
 function tStart(key,manual){ tStop(key); const t=TANIM[key]; if(!t)return; t.draw0(); if(t.paused||(reduceMotion&&!manual))return; tFrame(key); }
 function tStop(key){ const t=TANIM[key]; if(t&&t.raf){cancelAnimationFrame(t.raf);t.raf=null;} }
 function tStopAll(){ Object.keys(TANIM).forEach(tStop); }
-function tToggle(key,btn){ const t=TANIM[key]; t.paused=!t.paused;
-  if(t.paused){ tStop(key); btn.textContent='▶ Riprendi'; }
-  else { btn.textContent='⏸ Pausa'; tStart(key,true); } }
+function tToggle(key){ const t=TANIM[key]; t.paused=!t.paused;
+  const lab=t.paused?'▶ Riprendi':'⏸ Pausa';
+  document.querySelectorAll('[data-anim="'+key+'"]').forEach(b=>b.textContent=lab);
+  if(t.paused) tStop(key); else tStart(key,true); }
 
 /* ============ NAVIGAZIONE ============ */
 const tabs=document.querySelectorAll('nav.main button');
@@ -1585,7 +1590,7 @@ function renderReview(s){ const st=qz[s];
 /* ============ INIT ============ */
 Object.keys(QUIZ).forEach(renderQuiz);
 Object.keys(PV).forEach(renderProva);
-if(reduceMotion){ Object.keys(TANIM).forEach(k=>{ TANIM[k].paused=true; const b=el('anim-'+k); if(b)b.textContent='▶ Riprendi'; }); }
+if(reduceMotion){ Object.keys(TANIM).forEach(k=>{ TANIM[k].paused=true; }); document.querySelectorAll('[data-anim]').forEach(b=>{b.textContent='▶ Riprendi';}); }
 </script>
 </body>
 </html>
