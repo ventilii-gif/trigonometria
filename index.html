@@ -337,8 +337,13 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
     <div class="card">
       <h2>Oltre il primo quadrante</h2>
       <p>I valori degli altri quadranti si ottengono da quelli del primo applicando le regole degli <strong>archi associati</strong> (sezione successiva) e i segni di ciascun quadrante. La figura mostra dove cadono i punti notevoli sulla circonferenza.</p>
-      <div class="diagram"><canvas id="cv-noti-circle"></canvas><p class="cap">🔄 Animazione: il raggio percorre i 16 archi notevoli in successione e per ciascuno mostra gradi e radianti con i segmenti di seno (verde) e coseno (arancio).</p></div>
-      <div style="text-align:center;margin:-.1rem 0 .3rem"><button class="btn ghost" id="anim-noti2" data-anim="noti" onclick="tToggle('noti')">⏸ Pausa</button></div>
+      <div class="diagram"><canvas id="cv-noti-circle"></canvas><p class="cap">🔄 Animazione: il raggio percorre i 16 archi notevoli in successione e per ciascuno mostra gradi, radianti e coordinate (cos α; sin α), con i segmenti di seno (verde) e coseno (arancio).</p></div>
+      <div style="display:flex;gap:.5rem;align-items:center;justify-content:center;flex-wrap:wrap;margin:0 0 .3rem">
+        <button class="btn ghost" id="anim-noti2" data-anim="noti" onclick="tToggle('noti')">⏸ Pausa</button>
+        <label style="font-size:.85em;color:var(--primary-d)">velocità</label>
+        <input type="range" data-speed="noti" min="0.25" max="2" step="0.25" value="1" oninput="setNotiSpeed(this.value)" style="width:110px;accent-color:var(--primary)">
+        <span class="v" data-speedval="noti" style="min-width:30px">1×</span>
+      </div>
       <div class="ex"><b>Es.</b> sin 150° = sin(180°−30°) = sin 30° = 1/2 ; &nbsp; cos 240° = cos(180°+60°) = −cos 60° = −1/2.</div>
     </div>
 
@@ -351,7 +356,12 @@ table.tbl td.lead{background:#f3f7fd;font-weight:600;color:var(--primary-d)}
       <div class="diagram"><canvas id="cv-noti-w60"></canvas><p class="cap">0°, 60°, 120°, 180°, 240°, 300°: le coordinate combinano ±1/2 e ±√3/2 (e ±1 sugli assi).</p></div>
       <h3>Gli angoli 30°, 150°, 210° e 330°</h3>
       <div class="diagram"><canvas id="cv-noti-w30"></canvas><p class="cap">30° = π/6, 150° = 5π/6, 210° = 7π/6, 330° = 11π/6: tutti con coordinate (±√3/2; ±1/2).</p></div>
-      <div style="text-align:center;margin:.2rem 0 0"><button class="btn ghost" id="anim-noti" data-anim="noti" onclick="tToggle('noti')">⏸ Pausa</button></div>
+      <div style="display:flex;gap:.5rem;align-items:center;justify-content:center;flex-wrap:wrap;margin:.2rem 0 0">
+        <button class="btn ghost" id="anim-noti" data-anim="noti" onclick="tToggle('noti')">⏸ Pausa</button>
+        <label style="font-size:.85em;color:var(--primary-d)">velocità</label>
+        <input type="range" data-speed="noti" min="0.25" max="2" step="0.25" value="1" oninput="setNotiSpeed(this.value)" style="width:110px;accent-color:var(--primary)">
+        <span class="v" data-speedval="noti" style="min-width:30px">1×</span>
+      </div>
     </div>
   </div>
 
@@ -980,7 +990,8 @@ function drawCircle(cv,cfg){
     if(cfg.deg2!=null) drawOne(cfg.deg2, cfg.col2||ROSE, ROSEFILL, cfg.label2||"P'", 0.47, false);
     drawOne(cfg.deg, PRIMARY, ANGFILL, cfg.label1==null?'P':cfg.label1, 0.32, cfg.annot);
   }
-  if(cfg.caption){ ctx.fillStyle=PRIMARYD;ctx.font='bold 13px sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(cfg.caption,10,8); }
+  if(cfg.captionLines){ ctx.font='bold 12px sans-serif';ctx.textAlign='left';ctx.textBaseline='top';
+    cfg.captionLines.forEach((ln,i)=>{ ctx.fillStyle=ln.c||PRIMARYD; ctx.fillText(ln.t,10,8+i*15); }); }
   ctx.restore();
 }
 
@@ -1270,11 +1281,12 @@ const TANIM={
   rel:{raf:null,paused:false,ang:20,
     frame(){ this.ang+=0.5; if(this.ang>=360)this.ang-=360; this.draw0(); },
     draw0(){ drawCircle(el('cv-rel-circle'),{deg:this.ang,show:{sin:true,cos:true,tan:false,radius:true},annot:true}); }},
-  noti:{raf:null,paused:false,f:0,_last:-1,
-    idx(){ return Math.floor(this.f/48); },
-    frame(){ this.f++; const i=this.idx(); if(i!==this._last){ this._last=i; this.draw0(); } },
-    draw0(){ const i=this.idx(),a=NOTI16[i%NOTI16.length];
-      drawCircle(el('cv-noti-circle'),{deg:a,marks:NOTI16MK,show:{sin:true,cos:true,radius:true},annot:true,label1:'',caption:a+'° = '+fmtRad(a)});
+  noti:{raf:null,paused:false,prog:0,speed:1,_last:-1,
+    idx(){ return Math.floor(this.prog/48); },
+    frame(){ this.prog+=this.speed; const i=this.idx(); if(i!==this._last){ this._last=i; this.draw0(); } },
+    draw0(){ const i=this.idx(),a=NOTI16[i%NOTI16.length],ex=EXACT[a]||['?','?','?'];
+      drawCircle(el('cv-noti-circle'),{deg:a,marks:NOTI16MK,show:{sin:true,cos:true,radius:true},annot:true,label1:'',
+        captionLines:[{t:'α = '+a+'° = '+fmtRad(a),c:PRIMARYD},{t:'cos α = '+ex[1],c:COSCOL},{t:'sin α = '+ex[0],c:SINCOL}]});
       drawWheel(el('cv-noti-w45'),MULT45,{active:i%MULT45.length});
       drawWheel(el('cv-noti-w60'),MULT60,{active:i%MULT60.length});
       drawWheel(el('cv-noti-w30'),ANG330,{active:i%ANG330.length}); }}
@@ -1287,6 +1299,9 @@ function tToggle(key){ const t=TANIM[key]; t.paused=!t.paused;
   const lab=t.paused?'▶ Riprendi':'⏸ Pausa';
   document.querySelectorAll('[data-anim="'+key+'"]').forEach(b=>b.textContent=lab);
   if(t.paused) tStop(key); else tStart(key,true); }
+function setNotiSpeed(v){ v=parseFloat(v); if(!isFinite(v))v=1; TANIM.noti.speed=v;
+  document.querySelectorAll('[data-speed="noti"]').forEach(s=>{ if(parseFloat(s.value)!==v)s.value=v; });
+  document.querySelectorAll('[data-speedval="noti"]').forEach(s=>{ s.textContent=(''+v).replace('.',',')+'×'; }); }
 
 /* ============ NAVIGAZIONE ============ */
 const tabs=document.querySelectorAll('nav.main button');
